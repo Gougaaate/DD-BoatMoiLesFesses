@@ -37,3 +37,13 @@ def generer_b_mat_a():
     return A,b
 
 A,b=generer_b_mat_a()
+
+while True:
+    x=imu.read_mag_raw()
+    y=np.linalg.inv(A)@(x+b)
+    y=y/np.linalg.norm(y)
+    a1=imu.read_accel_raw()
+    a1=a1/np.linalg.norm(a1)
+    phichap=np.arcsin()
+
+
