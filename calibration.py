@@ -68,23 +68,25 @@ def rotuv(u, v):  # returns rotation with minimal angle such as v=R*u
 
 
 A, b = calibrate_mag()
+print("A :", A)
+print("b :", b)
 
 while True:
-    time.sleep(0.25)
     x1 = np.array(imu.read_mag_raw())
     y1 = np.linalg.inv(A) @ (x1 + b)
     y1 = y1 / np.linalg.norm(y1)
     a1 = np.array(imu.read_accel_raw())
     a1 = a1 / np.linalg.norm(a1)
-    j = np.array([0, 1, 0]).T
     i = np.array([1, 0, 0]).T
+    j = np.array([0, 1, 0]).T
     k = np.array([0, 0, 1]).T
     phi_hat = np.arcsin(scalarprod(a1.T, j))
-    phi_hat = radians_to_degrees(phi_hat)
+    # phi_hat = radians_to_degrees(phi_hat)
     theta_hat = -np.arcsin(scalarprod(a1.T, i))
-    theta_hat = radians_to_degrees(theta_hat)
+    # theta_hat = radians_to_degrees(theta_hat)
     Rh = rotuv(a1, k)
     yh = Rh @ y1
+    print(yh)
     yh1, yh2, yh3 = yh.flatten()
     psi_hat = radians_to_degrees(-np.arctan2(yh2, yh1))
     print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :", psi_hat)
