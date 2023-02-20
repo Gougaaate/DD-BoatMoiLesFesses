@@ -27,18 +27,21 @@ def calibrate_mag():
     xs = np.array(xs)
     xw = np.array(xw)
     xu = np.array(xu)
-    
+
     b = -0.5 * (xn + xs)
     X = np.vstack((xn + b, xw + b, xu + b))
-    yn = np.array(
-        [beta * np.cos(64 * np.pi / 180), 0,
-         beta * np.sin(64 * np.pi / 180)]).T
-    yw = np.array([
-        0, -beta * np.cos(64 * np.pi / 180), -beta * np.sin(64 * np.pi / 180)
+    yn = np.array([
+        beta * np.cos(inclination * np.pi / 180), 0,
+        -beta * np.sin(inclination * np.pi / 180)
     ]).T
-    yup = np.array(
-        [-beta * np.sin(64 * np.pi / 180), 0,
-         beta * np.cos(64 * np.pi / 180)]).T
+    yw = np.array([
+        0, -beta * np.cos(inclination * np.pi / 180),
+        -beta * np.sin(inclination * np.pi / 180)
+    ]).T
+    yup = np.array([
+        -beta * np.sin(inclination * np.pi / 180), 0,
+        beta * np.cos(inclination * np.pi / 180)
+    ]).T
     Y = np.vstack((yn, yw, yup))
     A = X @ np.linalg.inv(Y)
     return A, b
