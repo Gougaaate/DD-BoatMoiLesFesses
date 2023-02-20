@@ -5,7 +5,6 @@ import sys
 
 sys.path.append("./drivers")
 from drivers.imu9_driver_v2 import *
-from roblib import rotuv
 
 imu = Imu9IO()
 beta = 46 * 10**(-6)
@@ -48,6 +47,22 @@ def angle_deg(u, v):
     angle_radians = np.arccos(
         (np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))))
     return angle_radians
+
+
+def scalarprod(u, v):  # scalar product
+    u, v = u.flatten(), v.flatten()
+    return sum(u[:] * v[:])
+
+
+def rotuv(u, v):  # returns rotation with minimal angle such as v=R*u
+    # see https://en.wikipedia.org/wiki/Rotation_matrix#Vector_to_vector_formulation
+    u = np.array(u).reshape(3, 1)
+    v = np.array(v).reshape(3, 1)
+    u = (1 / np.linalg.norm(u)) * u
+    v = (1 / np.linalg.norm(v)) * v
+    c = scalarprod(u, v)
+    A = v @ u.T - u @ v.T
+    return np.eye(3, 3) + A + (1 / (1 + c)) * A @ A
 
 
 A, b = calibrate_mag()
