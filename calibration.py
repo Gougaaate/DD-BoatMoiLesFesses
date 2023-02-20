@@ -7,7 +7,7 @@ sys.path.append("./drivers")
 from drivers.imu9_driver_v2 import *
 
 imu = Imu9IO()
-beta = 46 * 10**(-6)
+beta = 46 * 10 ** (-6)
 inclination = 64
 
 
@@ -32,7 +32,7 @@ def calibrate_mag():
     ]).T
     yw = np.array([
         0, -beta * np.cos(inclination * np.pi / 180),
-        -beta * np.sin(inclination * np.pi / 180)
+           -beta * np.sin(inclination * np.pi / 180)
     ]).T
     yup = np.array([
         -beta * np.sin(inclination * np.pi / 180), 0,
@@ -76,6 +76,7 @@ def rotuv(u, v):  # returns rotation with minimal angle such as v=R*u
 A, b = calibrate_mag()
 
 while True:
+    time.sleep(0.25)
     x1 = np.array(imu.read_mag_raw())
     y1 = np.linalg.inv(A) @ (x1 + b)
     y1 = y1 / np.linalg.norm(y1)
@@ -86,8 +87,10 @@ while True:
     k = np.array([0, 0, 1]).T
     print(angle_deg(a1.T, j))
     print(angle_deg(a1.T, i))
-    phi_hat = np.arcsin(angle_deg(a1.T, j))
-    theta_hat = -np.arcsin(angle_deg(a1.T, i))
+    phi_hat = np.arcsin(scalarprod(a1.T, j))
+    phi_hat = radians_to_degrees(phi_hat)
+    theta_hat = -np.arcsin(scalarprod(a1.T, i))
+    theta_hat = radians_to_degrees(theta_hat)
     Rh = rotuv(a1, k)
     yh = Rh @ y1
     yh1, yh2, yh3 = yh.flatten()
