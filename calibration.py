@@ -7,7 +7,7 @@ sys.path.append("./drivers")
 from drivers.imu9_driver_v2 import *
 
 imu = Imu9IO()
-beta = 46 * 10 ** (-6)
+beta = 46 * 10**(-6)
 inclination = 64
 
 
@@ -27,26 +27,20 @@ def calibrate_mag():
     b = -0.5 * (xn + xs)
     X = np.vstack((xn + b, xw + b, xu + b))
     yn = np.array([
-        beta * np.cos(inclination * np.pi / 180), 0,
-        -beta * np.sin(inclination * np.pi / 180)
+        beta * np.cos(degrees_to_radians(inclination)), 0,
+        -beta * np.sin(degrees_to_radians(inclination))
     ]).T
     yw = np.array([
-        0, -beta * np.cos(inclination * np.pi / 180),
-           -beta * np.sin(inclination * np.pi / 180)
+        0, -beta * np.cos(degrees_to_radians(inclination)),
+        -beta * np.sin(degrees_to_radians(inclination))
     ]).T
     yup = np.array([
-        -beta * np.sin(inclination * np.pi / 180), 0,
-        beta * np.cos(inclination * np.pi / 180)
+        -beta * np.sin(degrees_to_radians(inclination)), 0,
+        beta * np.cos(degrees_to_radians(inclination))
     ]).T
     Y = np.vstack((yn, yw, yup))
     A = X @ np.linalg.inv(Y)
     return A, b
-
-
-def angle_deg(u, v):
-    angle_radians = np.arccos(
-        (np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))))
-    return angle_radians
 
 
 def degrees_to_radians(degrees):
@@ -85,8 +79,6 @@ while True:
     j = np.array([0, 1, 0]).T
     i = np.array([1, 0, 0]).T
     k = np.array([0, 0, 1]).T
-    print(angle_deg(a1.T, j))
-    print(angle_deg(a1.T, i))
     phi_hat = np.arcsin(scalarprod(a1.T, j))
     phi_hat = radians_to_degrees(phi_hat)
     theta_hat = -np.arcsin(scalarprod(a1.T, i))
