@@ -5,6 +5,7 @@ import sys
 
 
 class ArduinoIO():
+
     def __init__(self):
         self.arduino = None
         self.cmdl = 0
@@ -40,7 +41,8 @@ class ArduinoIO():
         #    self.dirr = '-'
         self.cmdl = abs(self.cmdl)
         self.cmdr = abs(self.cmdr)
-        strcmd = "M%c%3.3d%c%3.3d;" % (self.dirl, self.cmdl, self.dirr, self.cmdr)
+        strcmd = "M%c%3.3d%c%3.3d;" % (self.dirl, self.cmdl, self.dirr,
+                                       self.cmdr)
         # print (strcmd)
         self.arduino.write(strcmd.encode())
 
@@ -59,7 +61,7 @@ class ArduinoIO():
                 break
         return data[0:-1]
 
-    # last motor command sent 
+    # last motor command sent
     def get_cmd_motor(self):
         return self.cmdl, self.cmdr
 

@@ -5,27 +5,23 @@ import time
 import sys
 sys.path.append("./drivers")
 from drivers.imu9_driver_v2 import *
-
+from roblib import rotuv
 imu = Imu9IO()
 beta = 46 * 10**(-6)
-I = 64
+inclination = 64
 
 
-def generer_b_mat_a():
-    print("mettre le bateau vers le nord")
-    time.sleep(5.0)
+def calibrate_mag():
+    input("Press enter for north calibration")
     xn = imu.read_mag_raw()
 
-    print("mettre le bateau vers le sud")
-    time.sleep(5.0)
+    input("Press enter for south calibration")
     xs = imu.read_mag_raw()
 
-    print("mettre le bateau vers l'ouest")
-    time.sleep(5.0)
+    input("Press enter for west calibration")
     xw = imu.read_mag_raw()
 
-    print("mettre le bateau vers l'up")
-    time.sleep(5.0)
+    input("Press enter for up calibration")
     xu = imu.read_mag_raw()
     b = -0.5*(xn+xs)
     X = np.vstack((xn+b,xw+b,xu+b))
@@ -40,7 +36,7 @@ def angle_degre(u,v):
     angle_radians=np.arccos((np.dot(u, v)/(np.linalg.norm(u)*np.linalg.norm(v))))
     return angle_radians
 
-A,b=generer_b_mat_a()
+A,b=calibrate_mag()
 
 while True:
     x=imu.read_mag_raw()
