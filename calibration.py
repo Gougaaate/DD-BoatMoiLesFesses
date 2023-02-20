@@ -1,6 +1,5 @@
 import numpy as np
 import numpy.linalg as lng
-import smbus
 import time
 from roblib import *
 
@@ -27,6 +26,7 @@ def generer_b_mat_a():
     print("mettre le bateau vers l'up")
     time.sleep(5.0)
     xu = imu.read_mag_raw()
+
     b = -0.5 * (xn + xs)
     X = np.vstack((xn + b, xw + b, xu + b))
     yn = np.array(
