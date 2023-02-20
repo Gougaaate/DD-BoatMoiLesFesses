@@ -7,7 +7,7 @@ from roblib import *
 from drivers.imu9_driver_v2 import *
 
 imu = Imu9IO()
-beta = 46 * 10 ** (-6)
+beta = 46 * 10 ** (-9)
 I = 64
 
 
@@ -36,4 +36,5 @@ def generer_b_mat_a():
     A=X@np.linalg.inv(Y)
     return A,b
 
-A,b=generer_b_mat_a()
+A,b = generer_b_mat_a()
+print(A,b)
