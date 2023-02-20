@@ -2,12 +2,11 @@ import numpy as np
 import numpy.linalg as lng
 import smbus
 import time
-from roblib import *
 
 from drivers.imu9_driver_v2 import *
 
 imu = Imu9IO()
-beta = 46 * 10 ** (-6)
+beta = 46 * 10**(-6)
 I = 64
 
 
@@ -27,6 +26,7 @@ def generer_b_mat_a():
     print("mettre le bateau vers l'up")
     time.sleep(5.0)
     xu = imu.read_mag_raw()
+<<<<<<< HEAD
     b = -0.5*(xn+xs)
     X = np.vstack((xn+b,xw+b,xu+b))
     yn = np.array([beta*np.cos(64*np.pi/180),0,beta*np.sin(64*np.pi/180)]).T
@@ -47,3 +47,27 @@ while True:
     phichap=np.arcsin()
 
 
+=======
+    b = -0.5 * (xn + xs)
+    X = np.vstack((xn + b, xw + b, xu + b))
+
+    yn = np.array(
+        [beta * np.cos(64 * np.pi / 180), 0,
+         beta * np.sin(64 * np.pi / 180)]).T
+    yw = np.array([
+        0, -beta * np.cos(64 * np.pi / 180), -beta * np.sin(64 * np.pi / 180)
+    ]).T
+    yup = np.array(
+        [-beta * np.sin(64 * np.pi / 180), 0,
+         beta * np.cos(64 * np.pi / 180)]).T
+    Y = np.vstack((yn, yw, yup))
+    A = X @ np.linalg.inv(Y)
+    return A, b
+
+
+A, b = generer_b_mat_a()
+
+while True:
+    print('cap initial : ', imu.read_mag_raw())
+    print('cap corrigé: ', lng.inv(A) @ imu.read_mag_raw() + b)
+>>>>>>> 12a541d90295681fd916c83fb8458d66a9b959d6
