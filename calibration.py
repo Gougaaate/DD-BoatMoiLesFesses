@@ -4,7 +4,6 @@ import smbus
 import time
 from roblib import *
 from drivers.imu9_driver_v2 import *
-<<<<<<< HEAD
 imu=Imu9IO()
 beta=46*10**(-6)
 I=64
@@ -27,14 +26,8 @@ def generer_b_mat_a():
     yw = np.array([0, -beta * np.cos(64 * np.pi / 180),-beta*np.sin(64*np.pi/180)]).T
     yup = np.array([-beta*np.sin(64*np.pi/180),0,beta*np.cos(64*np.pi/180)]).T
     Y = np.vstack((yn,yw,yup))
-    A=X@np.linalg(Y)
+    A=X@np.linalg.inv(Y)
     return A,b
 
 generer_b_mat_a()
 
-
-    
-=======
-
-imu = Imu9IO()
->>>>>>> 26411ea48317dd31322115f2ec099d15c0b0cd6b

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #available at https://www.ensta-bretagne.fr/jaulin/roblib.py
 # For help : https://www.ensta-bretagne.fr/jaulin/python.html  
 # used in KalMOOC :  https://www.ensta-bretagne.fr/kalmooc/
@@ -690,7 +689,7 @@ if __name__ == "__main__":
 #    
 #    
 
-=======
+
 # MIT License
 
 # Copyright (c) [2022] [Luc Jaulin]
@@ -1422,4 +1421,3 @@ if __name__ == "__main__":
 #    
 #    
 #    
->>>>>>> 26411ea48317dd31322115f2ec099d15c0b0cd6b
