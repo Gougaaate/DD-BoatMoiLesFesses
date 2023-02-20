@@ -49,6 +49,14 @@ def angle_deg(u, v):
     return angle_radians
 
 
+def degrees_to_radians(degrees):
+    return degrees * np.pi / 180
+
+
+def radians_to_degrees(radians):
+    return radians * 180 / np.pi
+
+
 def scalarprod(u, v):  # scalar product
     u, v = u.flatten(), v.flatten()
     return sum(u[:] * v[:])
@@ -76,10 +84,12 @@ while True:
     j = np.array([0, 1, 0]).T
     i = np.array([1, 0, 0]).T
     k = np.array([0, 0, 1]).T
+    print(angle_deg(a1.T, j))
+    print(angle_deg(a1.T, i))
     phi_hat = np.arcsin(angle_deg(a1.T, j))
     theta_hat = -np.arcsin(angle_deg(a1.T, i))
     Rh = rotuv(a1, k)
     yh = Rh @ y1
     yh1, yh2, yh3 = yh.flatten()
-    psi_hat = -np.arctan2(yh2, yh1)
+    psi_hat = radians_to_degrees(-np.arctan2(yh2, yh1))
     print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :", psi_hat)
