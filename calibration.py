@@ -81,12 +81,9 @@ while True:
     j = np.array([0, 1, 0]).T
     k = np.array([0, 0, 1]).T
     phi_hat = np.arcsin(scalarprod(a1.T, j))
-    # phi_hat = radians_to_degrees(phi_hat)
     theta_hat = -np.arcsin(scalarprod(a1.T, i))
-    # theta_hat = radians_to_degrees(theta_hat)
     Rh = rotuv(a1, k)
     yh = Rh @ y1
-    print(yh)
     yh1, yh2, yh3 = yh.flatten()
-    psi_hat = radians_to_degrees(-np.arctan2(yh2, yh1))
+    psi_hat = radians_to_degrees(-np.arctan2(yh1, yh2))
     print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :", psi_hat)
