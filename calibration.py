@@ -50,8 +50,8 @@ def calibrate_mag():
 A, b = calibrate_mag()
 
 while True:
-    x = imu.read_mag_raw()
-    y = np.linalg.inv(A) @ (x + b)
-    y = y / np.linalg.norm(y)
+    x1 = imu.read_mag_raw()
+    y1 = np.linalg.inv(A) @ (x1 + b)
+    y1 = y1 / np.linalg.norm(y1)
     a1 = imu.read_accel_raw()
     a1 = a1 / np.linalg.norm(a1)
