@@ -5,7 +5,7 @@ import time
 from roblib import *
 
 from drivers.imu9_driver_v2 import *
-<<<<<<< HEAD
+
 imu=Imu9IO()
 beta=46*10**(-6)
 I=64
@@ -33,9 +33,3 @@ def generer_b_mat_a():
 
 generer_b_mat_a()
 
-
-    
-=======
-
-imu = Imu9IO()
->>>>>>> 26411ea48317dd31322115f2ec099d15c0b0cd6b
