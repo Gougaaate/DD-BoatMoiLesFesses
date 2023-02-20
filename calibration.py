@@ -6,19 +6,24 @@ from roblib import *
 
 from drivers.imu9_driver_v2 import *
 
-imu=Imu9IO()
-beta=46*10**(-6)
-I=64
+imu = Imu9IO()
+beta = 46 * 10 ** (-6)
+I = 64
+
+
 def generer_b_mat_a():
     print("mettre le bateau vers le nord")
     time.sleep(5.0)
     xn = imu.read_mag_raw()
+
     print("mettre le bateau vers le sud")
     time.sleep(5.0)
     xs = imu.read_mag_raw()
+
     print("mettre le bateau vers l'ouest")
     time.sleep(5.0)
     xw = imu.read_mag_raw()
+
     print("mettre le bateau vers l'up")
     time.sleep(5.0)
     xu = imu.read_mag_raw()
@@ -32,4 +37,3 @@ def generer_b_mat_a():
     return A,b
 
 A,b=generer_b_mat_a()
-

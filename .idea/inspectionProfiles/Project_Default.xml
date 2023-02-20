@@ -1,0 +1,52 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="DuplicatedCode" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <Languages>
+        <language minSize="64" name="Python" />
+      </Languages>
+    </inspection_tool>
+    <inspection_tool class="LanguageDetectionInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyArgumentEqualDefaultInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyGlobalUndefinedInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyPep8Inspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyPep8NamingInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyShadowingNamesInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="cv2.destroyAllWindows" />
+          <option value="cv2.waitKey" />
+          <option value="cv2.imshow" />
+          <option value="cv2.putText" />
+          <option value="cv2.FONT_HERSHEY_SIMPLEX" />
+          <option value="cv2.LINE_AA" />
+          <option value="cv2.imread" />
+          <option value="cv2.destroyWindow" />
+          <option value="cv2.cvtColor" />
+          <option value="cv2.COLOR_BGR2RGB" />
+          <option value="cv2.BORDER_CONSTANT" />
+          <option value="cv2.copyMakeBorder" />
+          <option value="cv2.namedWindow" />
+          <option value="cv2.equalizeHist" />
+          <option value="cv2.imwrite" />
+          <option value="cv2.createCLAHE" />
+          <option value="cv2.VideoCapture" />
+          <option value="cv2.VideoWriter" />
+          <option value="cv2.VideoWriter_fourcc" />
+          <option value="cv2.blur" />
+          <option value="cv2.medianBlur" />
+          <option value="cv2.filter2D" />
+          <option value="cv2.GaussianBlur" />
+          <option value="cv2.COLOR_BGR2GRAY" />
+          <option value="cv2.*" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="SpellCheckingInspection" enabled="false" level="TYPO" enabled_by_default="false">
+      <option name="processCode" value="true" />
+      <option name="processLiterals" value="true" />
+      <option name="processComments" value="true" />
+    </inspection_tool>
+  </profile>
+</component>
