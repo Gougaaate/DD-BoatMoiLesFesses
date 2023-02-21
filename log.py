@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def plot_data():
     with open('log.txt', 'r') as f:
         speed_left = []
