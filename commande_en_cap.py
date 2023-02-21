@@ -11,9 +11,9 @@ last_wl, last_wr = 0, 0
 
 
 def run(arduino, imu, objectif, vitesse, temps):
-    A_inv = np.array([[-72943279.10031439, -28668057.74777813, 3158664.09355233],
-                      [-5700163.24498797, 80185389.18243794, 884174.92923037],
-                      [-4284025.47859625, 1854081.35680193, -67672505.82742904]])
+    A = np.array([[-72943279.10031439, -28668057.74777813, 3158664.09355233],
+                  [-5700163.24498797, 80185389.18243794, 884174.92923037],
+                  [-4284025.47859625, 1854081.35680193, -67672505.82742904]])
     b = np.array([-1414.5, 1552.5, -4570.5]).T
 
     k3 = 5
@@ -36,8 +36,8 @@ def run(arduino, imu, objectif, vitesse, temps):
         while tfin - tinit <= temps:
             temps_reel = time.time()
             temps_boucle_cap = time.time()
-            w1, w2, cap, e = commande_en_cap(arduino, imu, A_inv, b, k3,
-                                             objectif, vitesse)
+            w1, w2, cap, e = commande_en_cap(arduino, imu, A, b, k3, objectif,
+                                             vitesse)
 
             while temps_reel - temps_boucle_cap < 2:
                 temps_boucle_encoder = time.time()
@@ -59,7 +59,7 @@ def run(arduino, imu, objectif, vitesse, temps):
 
 def sawtooth(x):
     return (x + np.pi) % (
-            2 * np.pi) - np.pi  # or equivalently   2*np.arctan(np.tan(x/2))
+        2 * np.pi) - np.pi  # or equivalently   2*np.arctan(np.tan(x/2))
 
 
 # def regule(encoder, controller, cw_left, cw_right):
@@ -95,8 +95,8 @@ def sawtooth(x):
 #     last_wl, last_wr = w_left, w_right
 
 
-def commande_en_cap(arduino, imu, A_inv, b, k3, objectif, vitesse):
-    y = A_inv @ (np.array(imu.read_mag_raw()) + b).T
+def commande_en_cap(arduino, imu, A, b, k3, objectif, vitesse):
+    y = np.linalg.inv(A) @ (np.array(imu.read_mag_raw()) + b).T
     cap = atan2(y[1], y[0]) * (180 / np.pi)
     e = float(objectif) - cap
     if e > 180:
@@ -123,7 +123,7 @@ def commande_en_cap(arduino, imu, A_inv, b, k3, objectif, vitesse):
     print("w1 : ", w1)
     print("w2 : ", w2)
     arduino.send_arduino_cmd_motor(w1, w2)
-    print("rpm = " , getRPM())
+    print("rpm = ", getRPM())
     return w1, w2, cap, e
 
 
