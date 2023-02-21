@@ -11,7 +11,19 @@ arduino = ArduinoIO()
 encoder = EncoderIO()
 
 
-def omega2(self):
+def delta_odo(odo1, odo0):
+    '''
+    computes the difference between 2 encoder values
+    '''
+    dodo = odo1 - odo0
+    if dodo > 32767:
+        dodo -= 65536
+    if dodo < -32767:
+        dodo += 65536
+    return dodo
+
+
+def getRPM(self):
     # time.sleep(5.0)
     delta_t = 3.0
     n_t = int(round(delta_t * 10))
@@ -37,7 +49,7 @@ def omega2(self):
     rpmL = abs(delta_odo(posLeft1, posLeft0) / 8.0 / delta_t * 60.0)
     rpmR = abs(delta_odo(posRight1, posRight0) / 8.0 / delta_t * 60.0)
 
-    #print("RPM Left", rpmL, "RPM Right", rpmR)
+    # print("RPM Left", rpmL, "RPM Right", rpmR)
 
     return abs(rpmL), abs(rpmR)
 
