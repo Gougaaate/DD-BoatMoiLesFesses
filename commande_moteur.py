@@ -10,6 +10,6 @@ encoder = EncoderIO()
 
 arduino.send_arduino_cmd_motor(80,80)
 while True:
-    print(arduino.get_arduino_cmd_motor())
+    encoder.get_last_value_v2()
 
 
