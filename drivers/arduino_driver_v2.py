@@ -17,7 +17,7 @@ class ArduinoIO():
             self.arduino = serial.Serial('/dev/ttyACM0', 115200, timeout=10.0)
             # arduino = serial.Serial('/dev/ttyACM1',115200,timeout=1.0)
             data = self.arduino.readline()
-            print("init status", len(data), data)
+            # print("init status", len(data), data)
         except:
             print("Cannot initialize Arduino driver")
         signal.signal(signal.SIGINT, self.signal_handler)
