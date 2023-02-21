@@ -12,12 +12,12 @@ def plot_data():
         error = []
         for ligne in f.readlines():
             c1, c2, c3, c4, c5, c6 = ligne.split()
-            speed_left.append(c1)
-            speed_right.append(c2)
-            input_left.append(c3)
-            input_right.append(c4)
-            heading_boat.append(c5)
-            error.append(c6)
+            speed_left.append(float(c1))
+            speed_right.append(float(c2))
+            input_left.append(float(c3))
+            input_right.append(float(c4))
+            heading_boat.append(float(c5))
+            error.append(float(c6))
         time = np.linspace(0, len(f.readlines()), 10)
 
     plt.figure("commandes moteur")
