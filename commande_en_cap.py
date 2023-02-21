@@ -33,7 +33,8 @@ def run(arduino, encoder, imu, objectif, vitesse, temps):
         while tfin - tinit <= temps:
             temps_reel = time.time()
             temps_boucle_cap = time.time()
-            w1, w2, cap, e = commande_en_cap(arduino, imu, A_inv, b, k3, objectif, vitesse)
+            w1, w2, cap, e = commande_en_cap(arduino, imu, A_inv, b, k3,
+                                             objectif, vitesse)
 
             while temps_reel - temps_boucle_cap < 2:
                 temps_boucle_encoder = time.time()
@@ -54,7 +55,8 @@ def run(arduino, encoder, imu, objectif, vitesse, temps):
 
 
 def sawtooth(x):
-    return (x + np.pi) % (2 * np.pi) - np.pi  # or equivalently   2*np.arctan(np.tan(x/2))
+    return (x + np.pi) % (
+        2 * np.pi) - np.pi  # or equivalently   2*np.arctan(np.tan(x/2))
 
 
 def regule(encoder, controller, cw_left, cw_right):
@@ -77,10 +79,14 @@ def regule(encoder, controller, cw_left, cw_right):
     cmdl = max(0, min(255, 1.2 * err_left + 0.2 * cuml))
     cmdr = max(0, min(255, 1.2 * err_right + 0.2 * cumr))
 
-    print("commande moteur gauche : {}\t droite: {}".format(np.round(cmdl, 5), np.round(cmdr, 5)))
-    print("consigne moteur gauche : {}\t droite: {}".format(np.round(cw_left, 5), np.round(cw_right, 5)))
-    print("vitesse relevée gauche : {}\t droite: {}".format(np.round(w_left, 5), np.round(w_right, 5)))
-    print("erreur gauche          : {}\t droite: {}".format(np.round(err_left, 5), np.round(err_right, 5)))
+    print("commande moteur gauche : {}\t droite: {}".format(
+        np.round(cmdl, 5), np.round(cmdr, 5)))
+    print("consigne moteur gauche : {}\t droite: {}".format(
+        np.round(cw_left, 5), np.round(cw_right, 5)))
+    print("vitesse relevée gauche : {}\t droite: {}".format(
+        np.round(w_left, 5), np.round(w_right, 5)))
+    print("erreur gauche          : {}\t droite: {}".format(
+        np.round(err_left, 5), np.round(err_right, 5)))
     controller.send_arduino_cmd_motor(cmdl, cmdr)
 
     last_wl, last_wr = w_left, w_right
@@ -96,7 +102,7 @@ def commande_en_cap(arduino, imu, A_inv, b, k3, objectif, vitesse):
         e = 360 + e
 
     w1 = (float(vitesse) + k3 * sawtooth(e * np.pi / 180)) / 2
-    w2 = (float(vitesse) - k3 * sawtooth(e  * np.pi / 180)) / 2
+    w2 = (float(vitesse) - k3 * sawtooth(e * np.pi / 180)) / 2
 
     if w1 < 0:
         w1 = 0

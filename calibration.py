@@ -7,7 +7,7 @@ sys.path.append("./drivers")
 from drivers.imu9_driver_v2 import *
 
 imu = Imu9IO()
-beta = 46 * 10 ** (-6)
+beta = 46 * 10**(-6)
 inclination = 64
 
 
@@ -28,16 +28,14 @@ def calibrate_mag():
     X = np.vstack((xn + b, xw + b, xu + b)).T
     print(X.shape)
 
-    yn = np.array(
-        [[beta * np.cos(degrees_to_radians(inclination))], [0], [-beta * np.sin(degrees_to_radians(inclination))]])
+    yn = np.array([[beta * np.cos(degrees_to_radians(inclination))], [0],
+                   [-beta * np.sin(degrees_to_radians(inclination))]])
 
-    yw = np.array(
-        [[0], [-beta * np.cos(degrees_to_radians(inclination))], [-beta * np.sin(degrees_to_radians(inclination))
-                                                                  ]])
+    yw = np.array([[0], [-beta * np.cos(degrees_to_radians(inclination))],
+                   [-beta * np.sin(degrees_to_radians(inclination))]])
 
-    yup = np.array(
-        [[-beta * np.sin(degrees_to_radians(inclination))], [0], [beta * np.cos(degrees_to_radians(inclination))
-                                                                  ]])
+    yup = np.array([[-beta * np.sin(degrees_to_radians(inclination))], [0],
+                    [beta * np.cos(degrees_to_radians(inclination))]])
 
     Y = np.hstack((yn, yw, yup))
     print(Y.shape)
@@ -112,7 +110,8 @@ def test_heading(A, b):  # calibration test
             del L[1][0]
             del L[2][0]
 
-        print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :", psi_hat)
+        print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :",
+              psi_hat)
         time.sleep(0.2)
 
 
