@@ -36,13 +36,13 @@ def run(arduino, imu, objectif, vitesse, temps):
         while tfin - tinit <= temps:
             temps_reel = time.time()
             temps_boucle_cap = time.time()
-            w1, w2, cap, e = commande_en_cap(arduino, imu, A_inv, b, k3,
+            w_left, w_right, cap, e = commande_en_cap(arduino, imu, A_inv, b, k3,
                                              objectif, vitesse)
 
             while temps_reel - temps_boucle_cap < 2:
                 temps_boucle_encoder = time.time()
 
-                # regule(encoder, arduino, w1, w2)
+                # regule(encoder, arduino, w_left, w_right)
                 print("Cap : ", cap)
                 print("Erreur cap : ", e)
                 temps_reel = time.time()
@@ -104,27 +104,27 @@ def commande_en_cap(arduino, imu, A_inv, b, k3, objectif, vitesse):
     elif e < -180:
         e = 360 + e
 
-    w1 = (float(vitesse) + k3 * sawtooth(e * np.pi / 180)) / 2
-    w2 = (float(vitesse) - k3 * sawtooth(e * np.pi / 180)) / 2
+    w_left = (float(vitesse) + k3 * sawtooth(e * np.pi / 180)) / 2
+    w_right = (float(vitesse) - k3 * sawtooth(e * np.pi / 180)) / 2
 
-    if w1 < 0:
-        w1 = 0
-    elif w1 > float(vitesse):
-        w1 = float(vitesse)
-    if w2 < 0:
-        w2 = 0
-    elif w2 > float(vitesse):
-        w2 = float(vitesse)
+    if w_left < 0:
+        w_left = 0
+    elif w_left > float(vitesse):
+        w_left = float(vitesse)
+    if w_right < 0:
+        w_right = 0
+    elif w_right > float(vitesse):
+        w_right = float(vitesse)
 
-    print("arduino motors rc", arduino.get_arduino_cmd_motor())
-    print("ENSV: ", arduino.get_arduino_energy_saver())
+    # print("arduino motors rc", arduino.get_arduino_cmd_motor())
+    # print("ENSV: ", arduino.get_arduino_energy_saver())
     print("Cap: ", cap)
     print("Erreur: ", e)
-    print("w1 : ", w1)
-    print("w2 : ", w2)
-    arduino.send_arduino_cmd_motor(w1, w2)
+    print("w_left : ", w_left)
+    print("w_right : ", w_right)
+    arduino.send_arduino_cmd_motor(w_left, w_right)
     print("rpm = " , getRPM())
-    return w1, w2, cap, e
+    return w_left, w_right, cap, e
 
 
 if __name__ == "__main__":
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     dt = 2.
 
     encoder.set_older_value_delay_v2(10 * dt)
-    cap = input("Rentrez le cap ")
-    vitesse = input("Rentrez la vitesse ")
-    temps = input("Rentrez le temps en s ")
+    cap = input("Heading ")
+    vitesse = input("Speed ")
+    temps = input("Duration (s) ")
     run(arduino, imu, cap, vitesse, float(temps))
