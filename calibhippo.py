@@ -1,5 +1,5 @@
 import numpy as np
-from imu9_driver_v2 import *
+from drivers.imu9_driver_v2 import *
 from math import *
 import time
 c = Imu9IO()
