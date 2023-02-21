@@ -25,4 +25,4 @@ elif goal_heading == "S":
 elif goal_heading == "E":
     goal_heading = 90
 
-followHeading(arduino, imu, encoder, A, b, goal_heading, duration)
+followHeading(goal_heading, duration, imu, arduino, encoder, A, b)
