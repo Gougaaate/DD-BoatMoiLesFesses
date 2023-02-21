@@ -1,45 +1,11 @@
 import numpy as np
 import time
 import sys
-from drivers.imu9_driver_v2 import Imu9IO
 
 sys.path.append("./drivers")
 
-imu = Imu9IO()
 beta = 46 * 10**(-6)
 inclination = 64
-
-
-def calibrateMag():
-    input("Press enter for north calibration")
-    xn = np.array(imu.read_mag_raw())
-
-    input("Press enter for south calibration")
-    xs = np.array(imu.read_mag_raw())
-
-    input("Press enter for west calibration")
-    xw = np.array(imu.read_mag_raw())
-
-    input("Press enter for up calibration")
-    xu = np.array(imu.read_mag_raw())
-
-    b = -0.5 * (xn + xs)
-    X = np.vstack((xn + b, xw + b, xu + b)).T
-    print(X.shape)
-
-    yn = np.array([[beta * np.cos(DegreesToRadians(inclination))], [0],
-                   [-beta * np.sin(DegreesToRadians(inclination))]])
-
-    yw = np.array([[0], [-beta * np.cos(DegreesToRadians(inclination))],
-                   [-beta * np.sin(DegreesToRadians(inclination))]])
-
-    yup = np.array([[-beta * np.sin(DegreesToRadians(inclination))], [0],
-                    [beta * np.cos(DegreesToRadians(inclination))]])
-
-    Y = np.hstack((yn, yw, yup))
-    print(Y.shape)
-    A = X @ np.linalg.inv(Y)
-    return A, b
 
 
 def DegreesToRadians(degrees):
@@ -56,7 +22,6 @@ def scalarProd(u, v):  # scalar product
 
 
 def rotuv(u, v):  # returns rotation with minimal angle such as v=R*u
-    # see https://en.wikipedia.org/wiki/Rotation_matrix#Vector_to_vector_formulation
     u = np.array(u).reshape(3, 1)
     v = np.array(v).reshape(3, 1)
     u = (1 / np.linalg.norm(u)) * u
@@ -66,13 +31,13 @@ def rotuv(u, v):  # returns rotation with minimal angle such as v=R*u
     return np.eye(3, 3) + A + (1 / (1 + c)) * A @ A
 
 
-def getHeadingSimple(A, b):
+def getHeadingSimple(imu, A, b):
     y = np.linalg.inv(A) @ (np.array(imu.read_mag_raw()).reshape(3, 1) + b)
     return 180 / np.pi * np.arctan2(y[1],
                                     y[0])  # returns boat heading in degrees
 
 
-def getEulerAngles(A, b):  # calibration test
+def getEulerAngles(imu, A, b):  # calibration test
     L = [[], [], []]
     while True:
         x1 = np.array(imu.read_mag_raw())
@@ -112,12 +77,3 @@ def getEulerAngles(A, b):  # calibration test
         print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :",
               psi_hat)
         time.sleep(0.2)
-
-
-if __name__ == "__main__":
-    A = np.array([[-72943279.10031439, -28668057.74777813, 3158664.09355233],
-                  [-5700163.24498797, 80185389.18243794, 884174.92923037],
-                  [-4284025.47859625, 1854081.35680193, -67672505.82742904]])
-    b = np.array([-1414.5, 1552.5, -4570.5]).T
-
-    getEulerAngles(A, b)
