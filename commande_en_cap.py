@@ -96,7 +96,7 @@ def commande_en_cap(arduino, imu, A_inv, b, k3, objectif, vitesse):
         e = 360 + e
 
     w1 = (float(vitesse) + k3 * sawtooth(e * np.pi / 180)) / 2
-    w2 = (float(vitesse) - k3 * sawtooth(e * np.pi / 180)) / 2
+    w2 = (float(vitesse) - k3 * sawtooth(e  * np.pi / 180)) / 2
 
     if w1 < 0:
         w1 = 0

@@ -105,4 +105,6 @@ print("b :", b)
 #     print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :", psi_hat)
 #     time.sleep(0.2)
 
-test(A, b)
+while True:
+    print(get_angle(A, b))
+    time.sleep(0.2)
