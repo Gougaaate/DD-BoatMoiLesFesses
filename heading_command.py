@@ -24,6 +24,9 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
     :param heading: angle corresponding to the heading
     :return: none
     """
+
+    file = open("log.txt", "w")
+
     dt = 0.5  # time step
     K11, K12, K21, K22, K3 = 0., 0., 0.06, 0.06, 650  # gains
     z1, z2 = 70, 70  # integral terms
@@ -53,6 +56,9 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
         # print("u : ", u1, u2)
         # print("psi : ", psi)
 
+        file.write(rpmL, rpmR, command_rpmL, command_rpmR, heading,
+                   abs(goal_heading - heading), "\n")
+
         arduino.send_arduino_cmd_motor(command_rpmL, command_rpmR)
 
         end_time = time.time()
@@ -60,3 +66,4 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
             time.sleep(dt - (end_time - init_time))
 
     arduino.send_arduino_cmd_motor(0, 0)  # turn off motors
+    file.close()

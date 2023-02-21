@@ -14,7 +14,7 @@ A = np.array([[-72943279.10031439, -28668057.74777813, 3158664.09355233],
 b = np.array([-1414.5, 1552.5, -4570.5]).T
 
 goal_heading = "W"
-duration = 30
+duration = 20
 
 if goal_heading == "N":
     goal_heading = 0
