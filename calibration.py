@@ -69,24 +69,23 @@ def rotuv(u, v):  # returns rotation with minimal angle such as v=R*u
 
 def get_angle(A, b):
     y = np.linalg.inv(A) @ (np.array(imu.read_mag_raw()).reshape(3, 1) + b)
-    return 180 / np.pi * np.arctan2(y[1, 0],
-                                    y[0, 0])  # returns boat heading in degrees
+    return 180 / np.pi * np.arctan2(y[1],
+                                    y[0])  # returns boat heading in degrees
 
 
 def test(A, b):  # to test calibration
-    for _ in range(50):
+    while True:
         print(get_angle(A, b))
-        time.sleep(0.2)
 
 
-# A, b = calibrate_mag()
-# print("A :", A)
-# print("b :", b)
+A, b = calibrate_mag()
+print("A :", A)
+print("b :", b)
 
-A = np.array([[-1.02678427e+08, 2.32084459e+07, -1.84551143e+07],
-              [-1.65787253e+08, 5.66821659e+07, -7.27692951e+07],
-              [-6.11925317e+07, 3.97221478e+07, -1.10497139e+08]])
-b = np.array([[-455.5], [1160.], [-5808.5]])
+#A = np.array([[-1.02678427e+08, 2.32084459e+07, -1.84551143e+07],
+              #[-1.65787253e+08, 5.66821659e+07, -7.27692951e+07],
+              #[-6.11925317e+07, 3.97221478e+07, -1.10497139e+08]])
+#b = np.array([[-455.5], [1160.], [-5808.5]])
 
 # while True:
 #     x1 = np.array(imu.read_mag_raw())
