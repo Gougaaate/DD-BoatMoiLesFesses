@@ -32,7 +32,7 @@ def rotuv(u, v):  # returns rotation with minimal angle such as v=R*u
 
 
 def getHeadingSimple(imu, A, b):
-    y = np.linalg.inv(A) @ (np.array(imu.read_mag_raw()).reshape(3, 1) + b)
+    y = np.linalg.inv(A) @ (np.array(imu.read_mag_raw()) + b)
     return 180 / np.pi * np.arctan2(y[1],
                                     y[0])  # returns boat heading in degrees
 
