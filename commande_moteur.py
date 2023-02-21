@@ -57,6 +57,7 @@ def getRPM():
     return abs(rpmL), abs(rpmR)
 
 
-arduino.send_arduino_cmd_motor(80, 80)
+arduino.send_arduino_cmd_motor(20, 20)
 while True:
-    encoder.get_last_value_v2()
+    rpmL, rpmR = getRPM()
+    print(rpmL, rpmR)
