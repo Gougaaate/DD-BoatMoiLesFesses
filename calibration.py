@@ -7,7 +7,7 @@ sys.path.append("./drivers")
 from drivers.imu9_driver_v2 import *
 
 imu = Imu9IO()
-beta = 46 * 10**(-6)
+beta = 46 * 10 ** (-6)
 inclination = 64
 
 
@@ -25,20 +25,18 @@ def calibrate_mag():
     xu = np.array(imu.read_mag_raw())
 
     b = -0.5 * (xn + xs)
-    X = np.vstack((xn + b, xw + b, xu + b))
-    yn = np.array([
-        beta * np.cos(degrees_to_radians(inclination)), 0,
-        -beta * np.sin(degrees_to_radians(inclination))
-    ]).T
-    yw = np.array([
-        0, -beta * np.cos(degrees_to_radians(inclination)),
-        -beta * np.sin(degrees_to_radians(inclination))
-    ]).T
-    yup = np.array([
-        -beta * np.sin(degrees_to_radians(inclination)), 0,
-        beta * np.cos(degrees_to_radians(inclination))
-    ]).T
-    Y = np.vstack((yn, yw, yup))
+    X = np.hstack((xn + b, xw + b, xu + b))
+
+    yn = np.array(
+        [[beta * np.cos(degrees_to_radians(inclination))], [0], [-beta * np.sin(degrees_to_radians(inclination))]])
+
+    yw = np.array([[0], [-beta * np.cos(degrees_to_radians(inclination))], [-beta * np.sin(degrees_to_radians(inclination))
+                   ]])
+
+    yup = np.array([[-beta * np.sin(degrees_to_radians(inclination))], [0], [beta * np.cos(degrees_to_radians(inclination))
+                    ]])
+
+    Y = np.hstack((yn, yw, yup))
     A = X @ np.linalg.inv(Y)
     return A, b
 
@@ -67,25 +65,23 @@ def rotuv(u, v):  # returns rotation with minimal angle such as v=R*u
     return np.eye(3, 3) + A + (1 / (1 + c)) * A @ A
 
 
-def get_angle(A, b):
+def get_heading(A, b):
     y = np.linalg.inv(A) @ (np.array(imu.read_mag_raw()).reshape(3, 1) + b)
     return 180 / np.pi * np.arctan2(y[1],
                                     y[0])  # returns boat heading in degrees
 
 
-def test(A, b):  # to test calibration
+def test_heading(A, b):  # to test calibration
     while True:
-        print(get_angle(A, b))
+        time.sleep(0.25)
+        print(get_heading(A, b))
 
 
-A, b = calibrate_mag()
-print("A :", A)
-print("b :", b)
 
-#A = np.array([[-1.02678427e+08, 2.32084459e+07, -1.84551143e+07],
-              #[-1.65787253e+08, 5.66821659e+07, -7.27692951e+07],
-              #[-6.11925317e+07, 3.97221478e+07, -1.10497139e+08]])
-#b = np.array([[-455.5], [1160.], [-5808.5]])
+# A = np.array([[-1.02678427e+08, 2.32084459e+07, -1.84551143e+07],
+# [-1.65787253e+08, 5.66821659e+07, -7.27692951e+07],
+# [-6.11925317e+07, 3.97221478e+07, -1.10497139e+08]])
+# b = np.array([[-455.5], [1160.], [-5808.5]])
 
 # while True:
 #     x1 = np.array(imu.read_mag_raw())
@@ -105,6 +101,9 @@ print("b :", b)
 #     print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :", psi_hat)
 #     time.sleep(0.2)
 
-while True:
-    print(get_angle(A, b))
-    time.sleep(0.2)
+if __name__ == "__main__":
+
+    A, b = calibrate_mag()
+    print("A :", A)
+    print("b :", b)
+    test_heading(A,b)
