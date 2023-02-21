@@ -25,7 +25,8 @@ def calibrate_mag():
     xu = np.array(imu.read_mag_raw())
 
     b = -0.5 * (xn + xs)
-    X = np.hstack((xn + b, xw + b, xu + b))
+    X = np.vstack((xn + b, xw + b, xu + b)).T
+    print(X.shape)
 
     yn = np.array(
         [[beta * np.cos(degrees_to_radians(inclination))], [0], [-beta * np.sin(degrees_to_radians(inclination))]])
@@ -37,6 +38,7 @@ def calibrate_mag():
                     ]])
 
     Y = np.hstack((yn, yw, yup))
+    print(Y.shape)
     A = X @ np.linalg.inv(Y)
     return A, b
 
