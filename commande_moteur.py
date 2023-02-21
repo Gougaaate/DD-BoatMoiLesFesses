@@ -6,9 +6,12 @@ import numpy as np
 
 sys.path.append("./drivers")
 
+dt = 2.
+
 imu = Imu9IO()
 arduino = ArduinoIO()
 encoder = EncoderIO()
+encoder.set_older_value_delay_v2(10*dt)
 
 
 def delta_odo(odo1, odo0):
@@ -23,13 +26,13 @@ def delta_odo(odo1, odo0):
     return dodo
 
 
-def getRPM(self):
+def getRPM():
     # time.sleep(5.0)
     delta_t = 3.0
     n_t = int(round(delta_t * 10))
-    self.enc.set_older_value_delay_v2(n_t)
+    encoder.set_older_value_delay_v2(n_t)
 
-    st1, st0 = self.enc.get_last_and_older_values_v2()
+    st1, st0 = encoder.get_last_and_older_values_v2()
     data_encoders0 = np.array(st0.split(',')).astype(np.float)
     data_encoders1 = np.array(st1.split(',')).astype(np.float)
 
