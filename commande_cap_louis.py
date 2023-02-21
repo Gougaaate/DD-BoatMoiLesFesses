@@ -4,7 +4,7 @@ from drivers.imu9_driver_v2 import Imu9IO
 from drivers.encoders_driver_v2 import EncoderIO
 import numpy as np
 import time
-from getRPM import getRPM
+from get_motors_RPM import getRPM
 
 cuml, cumr = 0, 0
 last_wl, last_wr = 0, 0
