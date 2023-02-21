@@ -4,16 +4,16 @@ from drivers.imu9_driver_v2 import Imu9IO
 from drivers.encoders_driver_v2 import EncoderIO
 import numpy as np
 import time
+from getRPM import getRPM
 
-document = "~/ddboat-titannick/Values/speed_motor.txt"
 cuml, cumr = 0, 0
 last_wl, last_wr = 0, 0
 
 
-def run(arduino, encoder, imu, objectif, vitesse, temps):
+def run(arduino, imu, objectif, vitesse, temps):
     A_inv = np.array([[-72943279.10031439, -28668057.74777813, 3158664.09355233],
-                  [-5700163.24498797, 80185389.18243794, 884174.92923037],
-                  [-4284025.47859625, 1854081.35680193, -67672505.82742904]])
+                      [-5700163.24498797, 80185389.18243794, 884174.92923037],
+                      [-4284025.47859625, 1854081.35680193, -67672505.82742904]])
     b = np.array([-1414.5, 1552.5, -4570.5]).T
 
     k3 = 5
@@ -59,7 +59,7 @@ def run(arduino, encoder, imu, objectif, vitesse, temps):
 
 def sawtooth(x):
     return (x + np.pi) % (
-        2 * np.pi) - np.pi  # or equivalently   2*np.arctan(np.tan(x/2))
+            2 * np.pi) - np.pi  # or equivalently   2*np.arctan(np.tan(x/2))
 
 
 # def regule(encoder, controller, cw_left, cw_right):
@@ -122,6 +122,8 @@ def commande_en_cap(arduino, imu, A_inv, b, k3, objectif, vitesse):
     print("Erreur: ", e)
     print("w1 : ", w1)
     print("w2 : ", w2)
+    arduino.send_arduino_cmd_motor(w1, w2)
+    print("rpm = " , getRPM())
     return w1, w2, cap, e
 
 
@@ -129,7 +131,10 @@ if __name__ == "__main__":
     arduino = ArduinoIO()
     encoder = EncoderIO()
     imu = Imu9IO()
-    cap = input("Rentrez le cap")
-    vitesse = input("Rentrez la vitesse")
-    temps = input("Rentrez le temps en s")
-    run(arduino, encoder, imu, cap, vitesse, float(temps))
+    dt = 2.
+
+    encoder.set_older_value_delay_v2(10 * dt)
+    cap = input("Rentrez le cap ")
+    vitesse = input("Rentrez la vitesse ")
+    temps = input("Rentrez le temps en s ")
+    run(arduino, imu, cap, vitesse, float(temps))
