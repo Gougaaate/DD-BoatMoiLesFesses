@@ -1,6 +1,10 @@
 import struct
 import time
 import sys
+import sys
+
+sys.path.append("./drivers")
+
 import math
 import i2creal as i2c  # currently only real I2C on ddboats (no simulated I2C)
 
