@@ -75,30 +75,48 @@ def get_heading(A, b):
                                     y[0])  # returns boat heading in degrees
 
 
-def test_heading(A, b):  # to test calibration
+def test_heading(A, b):  # calibration test
+    L = [[], [], []]
     while True:
         x1 = np.array(imu.read_mag_raw())
         y1 = np.linalg.inv(A) @ (x1 + b)
         y1 = y1 / np.linalg.norm(y1)
+
         a1 = np.array(imu.read_accel_raw())
         a1 = a1 / np.linalg.norm(a1)
+        a1[2] = -a1[2]
+        print("a1 = ", a1)
+
         i = np.array([1, 0, 0]).T
         j = np.array([0, 1, 0]).T
         k = np.array([0, 0, 1]).T
+
         phi_hat = radians_to_degrees(np.arcsin(scalarprod(a1.T, j)))
         theta_hat = radians_to_degrees(-np.arcsin(scalarprod(a1.T, i)))
+
         Rh = rotuv(a1, k)
         yh = Rh @ y1
         yh1, yh2, yh3 = yh.flatten()
         psi_hat = radians_to_degrees(-np.arctan2(yh2, yh1))
+
+        L[0].append(phi_hat)
+        L[1].append(theta_hat)
+        L[2].append(psi_hat)
+        alpha, beta, gamma = 0.6, 0.2, 0.2
+        if len(L[0]) > 2:
+            phi_hat = alpha * L[0][-1] + beta * L[0][-2] + gamma * L[0][-3]
+            theta_hat = alpha * L[1][-1] + beta * L[1][-2] + gamma * L[1][-3]
+            psi_hat = alpha * L[2][-1] + beta * L[2][-2] + gamma * L[2][-3]
+
+            del L[0][0]
+            del L[1][0]
+            del L[2][0]
+
         print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :", psi_hat)
         time.sleep(0.2)
 
 
-
-
 if __name__ == "__main__":
-
     A = np.array([[-72943279.10031439, -28668057.74777813, 3158664.09355233],
                   [-5700163.24498797, 80185389.18243794, 884174.92923037],
                   [-4284025.47859625, 1854081.35680193, -67672505.82742904]])
