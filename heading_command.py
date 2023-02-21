@@ -56,13 +56,13 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
         # print("u : ", u1, u2)
         # print("psi : ", psi)
 
-        to_write = [
+        data_to_write = [
             rpmL, rpmR, command_rpmL, command_rpmR, heading,
             abs(goal_heading - heading), "\n"
         ]
 
-        for elt in to_write:
-            file.write(str(elt))
+        for data in data_to_write:
+            file.write(str(data))
 
         arduino.send_arduino_cmd_motor(command_rpmL, command_rpmR)
 
@@ -71,4 +71,4 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
             time.sleep(dt - (end_time - init_time))
 
     arduino.send_arduino_cmd_motor(0, 0)  # turn off motors
-    file.close()
+    # file.close()
