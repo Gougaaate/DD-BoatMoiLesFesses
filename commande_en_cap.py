@@ -36,8 +36,8 @@ def run(arduino, imu, objectif, vitesse, temps):
         while tfin - tinit <= temps:
             temps_reel = time.time()
             temps_boucle_cap = time.time()
-            w_left, w_right, cap, e = commande_en_cap(arduino, imu, A, b, k3, objectif,
-                                             vitesse)
+            w1, w2, cap, e = commande_en_cap(arduino, imu, A, b, k3,
+                                             objectif, vitesse)
 
             while temps_reel - temps_boucle_cap < 2:
                 temps_boucle_encoder = time.time()
@@ -120,11 +120,11 @@ def commande_en_cap(arduino, imu, A, b, k3, objectif, vitesse):
     # print("ENSV: ", arduino.get_arduino_energy_saver())
     print("Cap: ", cap)
     print("Erreur: ", e)
-    print("w1 : ", w1)
-    print("w2 : ", w2)
-    arduino.send_arduino_cmd_motor(w1, w2)
-    print("rpm = " , getRPM())
-    return w1, w2, cap, e
+    print("w_left : ", w_left)
+    print("w_right : ", w_right)
+    arduino.send_arduino_cmd_motor(w_left, w_right)
+    print("rpm = ", getRPM())
+    return w_left, w_right, cap, e
 
 
 if __name__ == "__main__":
