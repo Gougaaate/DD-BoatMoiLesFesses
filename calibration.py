@@ -31,11 +31,13 @@ def calibrate_mag():
     yn = np.array(
         [[beta * np.cos(degrees_to_radians(inclination))], [0], [-beta * np.sin(degrees_to_radians(inclination))]])
 
-    yw = np.array([[0], [-beta * np.cos(degrees_to_radians(inclination))], [-beta * np.sin(degrees_to_radians(inclination))
-                   ]])
+    yw = np.array(
+        [[0], [-beta * np.cos(degrees_to_radians(inclination))], [-beta * np.sin(degrees_to_radians(inclination))
+                                                                  ]])
 
-    yup = np.array([[-beta * np.sin(degrees_to_radians(inclination))], [0], [beta * np.cos(degrees_to_radians(inclination))
-                    ]])
+    yup = np.array(
+        [[-beta * np.sin(degrees_to_radians(inclination))], [0], [beta * np.cos(degrees_to_radians(inclination))
+                                                                  ]])
 
     Y = np.hstack((yn, yw, yup))
     print(Y.shape)
@@ -75,37 +77,31 @@ def get_heading(A, b):
 
 def test_heading(A, b):  # to test calibration
     while True:
-        time.sleep(0.25)
-        print(get_heading(A, b))
+        x1 = np.array(imu.read_mag_raw())
+        y1 = np.linalg.inv(A) @ (x1 + b)
+        y1 = y1 / np.linalg.norm(y1)
+        a1 = np.array(imu.read_accel_raw())
+        a1 = a1 / np.linalg.norm(a1)
+        i = np.array([1, 0, 0]).T
+        j = np.array([0, 1, 0]).T
+        k = np.array([0, 0, 1]).T
+        phi_hat = radians_to_degrees(np.arcsin(scalarprod(a1.T, j)))
+        theta_hat = radians_to_degrees(-np.arcsin(scalarprod(a1.T, i)))
+        Rh = rotuv(a1, k)
+        yh = Rh @ y1
+        yh1, yh2, yh3 = yh.flatten()
+        psi_hat = radians_to_degrees(-np.arctan2(yh2, yh1))
+        print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :", psi_hat)
+        time.sleep(0.2)
 
 
 
-# A = np.array([[-1.02678427e+08, 2.32084459e+07, -1.84551143e+07],
-# [-1.65787253e+08, 5.66821659e+07, -7.27692951e+07],
-# [-6.11925317e+07, 3.97221478e+07, -1.10497139e+08]])
-# b = np.array([[-455.5], [1160.], [-5808.5]])
-
-# while True:
-#     x1 = np.array(imu.read_mag_raw())
-#     y1 = np.linalg.inv(A) @ (x1 + b)
-#     y1 = y1 / np.linalg.norm(y1)
-#     a1 = np.array(imu.read_accel_raw())
-#     a1 = a1 / np.linalg.norm(a1)
-#     i = np.array([1, 0, 0]).T
-#     j = np.array([0, 1, 0]).T
-#     k = np.array([0, 0, 1]).T
-#     phi_hat = radians_to_degrees(np.arcsin(scalarprod(a1.T, j)))
-#     theta_hat = radians_to_degrees(-np.arcsin(scalarprod(a1.T, i)))
-#     Rh = rotuv(a1, k)
-#     yh = Rh @ y1
-#     yh1, yh2, yh3 = yh.flatten()
-#     psi_hat = radians_to_degrees(-np.arctan2(yh2, yh1))
-#     print("Phi_hat :", phi_hat, "Theta_hat :", theta_hat, "Psi_hat :", psi_hat)
-#     time.sleep(0.2)
 
 if __name__ == "__main__":
 
-    A, b = calibrate_mag()
-    print("A :", A)
-    print("b :", b)
-    test_heading(A,b)
+    A = np.array([[-72943279.10031439, -28668057.74777813, 3158664.09355233],
+                  [-5700163.24498797, 80185389.18243794, 884174.92923037],
+                  [-4284025.47859625, 1854081.35680193, -67672505.82742904]])
+    b = np.array([-1414.5, 1552.5, -4570.5]).T
+
+    test_heading(A, b)
