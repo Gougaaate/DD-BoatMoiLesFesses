@@ -35,11 +35,9 @@ def adjustPWM(command_pwmL, command_pwmR, command_rpmL, command_rpmR, encoder):
     elif command_pwmR < 0:
         command_pwmR = 0
     elif command_rpmR - getRPM(encoder)[1] > 50:
-        while command_rpmR - getRPM(encoder)[1] > 50:
-            command_pwmR += 5
+        command_pwmR = 5
     elif command_rpmR - getRPM(encoder)[1] < -50:
-        while command_rpmR - getRPM(encoder)[1] < -50:
-            command_pwmR -= 5
+        command_pwmR = 5
 
     return command_pwmL, command_pwmR
 
@@ -78,6 +76,9 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
         z2 += e2 * dt
         command_rpmL = K11 * e1  # + K21 * z1
         command_rpmR = K12 * e2  # + K22 * z2
+
+        print(e1)
+        print(e2)
 
         command_pwmL, command_pwmR = adjustPWM(command_pwmL, command_pwmR,
                                                command_rpmL, command_rpmR,
