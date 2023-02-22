@@ -61,7 +61,7 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
         # print("psi : ", psi)
 
         data_to_write = [
-            rpmL, rpmR, heading,
+            rpmL, rpmR, command_rpmL, command_rpmR, heading,
             abs(goal_heading - heading)
         ]
 
