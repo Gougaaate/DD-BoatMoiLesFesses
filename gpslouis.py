@@ -3,6 +3,7 @@ from drivers.arduino_driver_v2 import ArduinoIO
 from drivers.imu9_driver_v2 import Imu9IO
 from drivers.encoders_driver_v2 import EncoderIO
 import numpy as np
+from heading_command import followHeading
 from get_current_heading import getHeadingSimple
 from get_motors_RPM import getRPM
 
@@ -82,53 +83,7 @@ def suivi_gps(arduino, imu, matA, vecb, vitesse):
         K11, K12, K21, K22, K3 = 0.006, 0.04, 0.05, 0.08, 200  # gains
         z1, z2 = 70, 70  # integral terms
         heading=getHeadingSimple(imu,matA,vecb)
-        while abs(capdes - heading) > 20:
-            heading = getHeadingSimple(imu, matA, vecb)  # current heading
-            heading_error = capdes - heading
-            if heading_error > 70:
-                print("turn right")
-                command_pwmL, command_pwmR = 60, 0
-                rpmL, rpmR = getRPM(encoder)  # read the RPM of the motors
-                goal_rpmL, goal_rpmR = 0, 0
-            elif heading_error < -70:
-                print("turn left")
-                command_pwmL, command_pwmR = 0, 60
-                rpmL, rpmR = getRPM(encoder)  # read the RPM of the motors
-                goal_rpmL, goal_rpmR = 0, 0
-            else:
-                goal_rpm_diff = K3 * heading_error  # desired rpm difference
-                wanted_rpm = 3000  # pivot rpm value (constant)
-                goal_rpmL, goal_rpmR = chooseRPM(
-                    wanted_rpm, goal_rpm_diff
-                )  # choose the rpm of the motors to turn left or right
-            rpmL, rpmR = getRPM(encoder)  # read the RPM of the motors
-            e1, e2 = goal_rpmL - rpmL, goal_rpmR - rpmR  # error terms
-            z1 += e1 * dt
-            z2 += e2 * dt
-
-            command_pwmL = K11 * e1 + K21 * z1
-            command_pwmR = K12 * e2 + K22 * z2
-
-            if command_pwmL > 255:
-                command_pwmL = 255
-            elif command_pwmL < 0:
-                command_pwmL = 0
-            if command_pwmR > 255:
-                command_pwmR = 255
-            elif command_pwmR < 0:
-                command_pwmR = 0
-
-            data_to_write = [
-                rpmL, rpmR, goal_rpmL, goal_rpmR, command_pwmL, command_pwmR,
-                heading, abs(heading_error)
-            ]
-
-            for data in data_to_write:
-                file.write(str(data) + " ")
-            file.write("\n")
-            arduino.send_arduino_cmd_motor(command_pwmL, command_pwmR)
-    arduino.send_arduino_cmd_motor(0, 0)  # turn off motors
-    file.close()
+        followHeading(capdes, 10000, imu, arduino, encoder, Ainv, binv)
 
 
 if __name__ == "__main__":
