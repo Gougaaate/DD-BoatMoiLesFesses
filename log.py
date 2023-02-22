@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -34,6 +33,7 @@ def plot_data():
     plt.figure("erreur")
     plt.plot(time, error)
     plt.show()
+
 
 if __name__ == '__main__':
     plot_data()

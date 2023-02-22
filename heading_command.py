@@ -28,7 +28,7 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
     :param duration: duration of the race
     :return: none
     """
-    c = 0
+    cnt = 0
     file = open("log.txt", "w")
 
     dt = 0.01  # time step
@@ -75,7 +75,7 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
         end_time = time.time()
         if end_time - init_time < dt:
             time.sleep(dt - (end_time - init_time))
-        c += 1
-        print(c)
+        cnt += 1
+        print(cnt)
     arduino.send_arduino_cmd_motor(0, 0)  # turn off motors
-    # file.close()
+    file.close()
