@@ -61,9 +61,9 @@ class EncoderIO():
     def set_baudrate(self, baudrate=115200):
         self.baud_rate = baudrate
         st = os.system("stty -F %s %d" % (self.dev_tty, self.baud_rate))
-        print(st)
+        # print(st)
         st = os.system("stty -F %s" % (self.dev_tty))
-        print(st)
+        # print(st)
 
     def close_line(self):
         self.ser.close()
@@ -168,7 +168,7 @@ class EncoderIO():
                 break
             else:
                 st += ch
-        print(st)
+        # print(st)
         return st
 
     # get last value and older value on V2 device
@@ -233,7 +233,7 @@ if __name__ == "__main__":
     while cnt < 3:
         # ask for last values
         data_encoders = encoddrv.get_last_value_v2()
-        print(data_encoders)
+        # print(data_encoders)
         cnt += 1
 
     cnt = 0
@@ -241,8 +241,8 @@ if __name__ == "__main__":
         # ask for last values
         data_encoders0, data_encoders1 = encoddrv.get_last_and_older_values_v2(
         )
-        print(data_encoders0)
-        print(data_encoders1)
-        print("---")
+        # print(data_encoders0)
+        # print(data_encoders1)
+        # print("---")
         time.sleep(1.0)
         cnt += 1
