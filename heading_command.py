@@ -2,6 +2,7 @@ import time
 import numpy as np
 from get_current_heading import getHeadingSimple
 from get_motors_RPM import getRPM
+from line_following import gps_to_xy
 
 
 def sawtooth(x):
@@ -18,7 +19,7 @@ def chooseRPM(wanted_rpm, goal_rpm_diff):
         return goal_rpmL, goal_rpmR
 
 
-def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
+def followHeading(file, imu, arduino, encoder, gps, A, b, line_a, line_b):
     """
     follows the heading for a given duration
     :param goal_heading: desired heading
@@ -30,13 +31,25 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
     :param b: vector b
     :return: none
     """
-    file = open("log.txt", "w")
-
     dt = 0.1  # time step
     K11, K12, K21, K22, K3 = 0.006, 0.04, 0.05, 0.08, 200  # gains
     z1, z2 = 70, 70  # integral terms
-    global_init_time = time.time()
-    while time.time() - global_init_time < duration:
+
+    gps_ok, gps_data = gps.read_gll_non_blocking()  # read gps data
+    boat_lat, boat_lon = gps_data[0], gps_data[2]  # get boat position
+    boat_x, boat_y = gps_to_xy(boat_lat, boat_lon)  # convert gps to xy
+    boat_pos = np.array([[boat_x], [boat_y]])  # boat position
+    line_error = np.det([[
+        line_b[0, 0] - line_a[0, 0], boat_pos[0, 0] - line_a[0, 0]
+    ], [line_b[1, 0] - line_a[1, 0], boat_pos[1, 0] - line_a[1, 0]]
+                         ]) / np.norm(line_b - line_a)  # line error
+    line_angle = np.arctan2(line_b[1, 0] - line_a[1, 0],
+                            line_b[0, 0] - line_a[0, 0])  # line angle
+    goal_heading = line_angle - np.arctan(line_error)  # desired heading
+
+    # global_init_time = time.time()
+    # while time.time() - global_init_time < duration:
+    while np.norm(boat_pos - line_b) < 1:  # while the boat is not at the end
         # init_time = time.time()
         heading = getHeadingSimple(imu, A, b)  # current heading
         heading_error = goal_heading - heading
@@ -75,7 +88,8 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
 
         data_to_write = [
             rpmL, rpmR, goal_rpmL, goal_rpmR, command_pwmL, command_pwmR,
-            heading, abs(heading_error)
+            heading,
+            abs(heading_error)
         ]
 
         for data in data_to_write:
@@ -85,4 +99,3 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
         arduino.send_arduino_cmd_motor(command_pwmL, command_pwmR)
 
     arduino.send_arduino_cmd_motor(0, 0)  # turn off motors
-    file.close()
