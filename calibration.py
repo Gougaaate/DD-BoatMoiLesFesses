@@ -1,18 +1,11 @@
 import numpy as np
 import sys
+from get_current_heading import degToRad
 
 sys.path.append("./drivers")
 
 beta = 46 * 10**(-6)
 inclination = 64
-
-
-def DegreesToRadians(degrees):
-    return degrees * np.pi / 180
-
-
-def RadiansToDegrees(radians):
-    return radians * 180 / np.pi
 
 
 def calibrateMag(imu):
@@ -32,14 +25,14 @@ def calibrateMag(imu):
     X = np.vstack((xn + b, xw + b, xu + b)).T
     print(X.shape)
 
-    yn = np.array([[beta * np.cos(DegreesToRadians(inclination))], [0],
-                   [-beta * np.sin(DegreesToRadians(inclination))]])
+    yn = np.array([[beta * np.cos(degToRad(inclination))], [0],
+                   [-beta * np.sin(degToRad(inclination))]])
 
-    yw = np.array([[0], [-beta * np.cos(DegreesToRadians(inclination))],
-                   [-beta * np.sin(DegreesToRadians(inclination))]])
+    yw = np.array([[0], [-beta * np.cos(degToRad(inclination))],
+                   [-beta * np.sin(degToRad(inclination))]])
 
-    yup = np.array([[-beta * np.sin(DegreesToRadians(inclination))], [0],
-                    [beta * np.cos(DegreesToRadians(inclination))]])
+    yup = np.array([[-beta * np.sin(degToRad(inclination))], [0],
+                    [beta * np.cos(degToRad(inclination))]])
 
     Y = np.hstack((yn, yw, yup))
     print(Y.shape)

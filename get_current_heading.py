@@ -8,11 +8,11 @@ beta = 46 * 10**(-6)
 inclination = 64
 
 
-def DegreesToRadians(degrees):
+def degToRad(degrees):
     return degrees * np.pi / 180
 
 
-def RadiansToDegrees(radians):
+def radToDeg(radians):
     return radians * 180 / np.pi
 
 
@@ -53,13 +53,13 @@ def getEulerAngles(imu, A, b):  # calibration test
         j = np.array([0, 1, 0]).T
         k = np.array([0, 0, 1]).T
 
-        phi_hat = RadiansToDegrees(np.arcsin(scalarProd(a1.T, j)))
-        theta_hat = RadiansToDegrees(-np.arcsin(scalarProd(a1.T, i)))
+        phi_hat = radToDeg(np.arcsin(scalarProd(a1.T, j)))
+        theta_hat = radToDeg(-np.arcsin(scalarProd(a1.T, i)))
 
         Rh = rotuv(a1, k)
         yh = Rh @ y1
         yh1, yh2, yh3 = yh.flatten()
-        psi_hat = RadiansToDegrees(-np.arctan2(yh2, yh1))
+        psi_hat = radToDeg(-np.arctan2(yh2, yh1))
 
         L[0].append(phi_hat)
         L[1].append(theta_hat)
