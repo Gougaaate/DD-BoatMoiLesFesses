@@ -1,4 +1,3 @@
-import time
 import numpy as np
 from get_current_heading import getHeadingSimple
 from get_motors_RPM import getRPM
