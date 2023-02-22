@@ -138,10 +138,10 @@ class EncoderIO():
                 1.0 - self.a)
             self.voltRightFilt = self.voltRightFilt * self.a + voltRight * (
                 1.0 - self.a)
-            if debug:
-                print(timer, sensLeft, sensRight, posLeft, posRight, voltLeft,
-                      voltRight, '[', int(round(self.voltLeftFilt)),
-                      int(round(self.voltRightFilt)), ']', stc3)
+            # if debug:
+            #     print(timer, sensLeft, sensRight, posLeft, posRight, voltLeft,
+            #           voltRight, '[', int(round(self.voltLeftFilt)),
+            #           int(round(self.voltRightFilt)), ']', stc3)
         return self.sync, data
 
     # do everything (open, sync, read, close) once (mainly for debug purpose)
@@ -182,7 +182,7 @@ class EncoderIO():
                 break
             else:
                 st1 += ch
-        print(st1)
+        # print(st1)
         st2 = ""
         while True:
             ch = self.ser.read().decode("utf-8")
@@ -191,7 +191,7 @@ class EncoderIO():
                 break
             else:
                 st2 += ch
-        print(st2)
+        # print(st2)
         return st1, st2
 
     # set the difference between last and older values on V2 device

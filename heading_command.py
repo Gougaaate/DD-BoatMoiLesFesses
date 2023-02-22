@@ -68,7 +68,7 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
         for data in data_to_write:
             file.write(str(data) + " ")
         file.write("\n")
-        arduino.send_arduino_cmd_motor(50, 50)
+        arduino.send_arduino_cmd_motor(70, 70)
 
         # arduino.send_arduino_cmd_motor(command_rpmL, command_rpmR)
 
