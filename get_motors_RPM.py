@@ -17,13 +17,8 @@ def deltaOdo(odo1, odo0):
 
 
 def getRPM(encoder):
-    dt = 2.0
-    encoder.set_older_value_delay_v2(10 * dt)
-    # time.sleep(5.0)
     delta_t = 3.0
-    n_t = int(round(delta_t * 10))
-    encoder.set_older_value_delay_v2(n_t)
-
+    encoder.set_older_value_delay_v2(10)
     st1, st0 = encoder.get_last_and_older_values_v2()
     data_encoders0 = np.array(st0.split(',')).astype(np.float)
     data_encoders1 = np.array(st1.split(',')).astype(np.float)
@@ -39,11 +34,12 @@ def getRPM(encoder):
     # sensRight1 = data_encoders1[1]
     posLeft1 = data_encoders1[4]
     posRight1 = data_encoders1[3]
+    print("step4")
 
     delta_t = timeAcq1 - timeAcq0
     rpmL = abs(deltaOdo(posLeft1, posLeft0) / 8.0 / delta_t * 60.0)
     rpmR = abs(deltaOdo(posRight1, posRight0) / 8.0 / delta_t * 60.0)
-
+    print("step5")
     # print("RPM Left", rpmL, "RPM Right", rpmR)
 
     return abs(rpmL), abs(rpmR)
