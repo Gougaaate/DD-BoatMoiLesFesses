@@ -34,12 +34,10 @@ def getRPM(encoder):
     # sensRight1 = data_encoders1[1]
     posLeft1 = data_encoders1[4]
     posRight1 = data_encoders1[3]
-    print("step4")
 
     delta_t = timeAcq1 - timeAcq0
     rpmL = abs(deltaOdo(posLeft1, posLeft0) / 8.0 / delta_t * 60.0)
     rpmR = abs(deltaOdo(posRight1, posRight0) / 8.0 / delta_t * 60.0)
-    print("step5")
     # print("RPM Left", rpmL, "RPM Right", rpmR)
 
     return abs(rpmL), abs(rpmR)

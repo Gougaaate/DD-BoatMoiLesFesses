@@ -59,7 +59,7 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
     # command_pwmL, command_pwmR = 80, 80  # pwm values
     global_init_time = time.time()
     while time.time() - global_init_time < duration:
-        init_time = time.time()
+        # init_time = time.time()
         heading = getHeadingSimple(imu, A, b)  # current heading
         goal_rpm_diff = K3 * sawtooth(
             degToRad(goal_heading) -
@@ -112,9 +112,9 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
 
         arduino.send_arduino_cmd_motor(command_pwmL, command_pwmR)
 
-        end_time = time.time()
-        if end_time - init_time < dt:
-            time.sleep(dt - (end_time - init_time))
+        # end_time = time.time()
+        # if end_time - init_time < dt:
+        #     time.sleep(dt - (end_time - init_time))
 
         loop_cnt += 1
         print(loop_cnt)
