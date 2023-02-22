@@ -73,16 +73,10 @@ def suivi_gps(arduino, imu, matA, vecb, vitesse):
         x, y = conversion_manuelle(gpsdata[0], gpsdata[2])
         m = np.array([[x], [y]])
         u = m - xiyi
-        att = m - a
         v = (a - xiyi) / np.linalg.norm(a - xiyi)
         A = np.hstack((u, v))
         e = np.linalg.det(A)
         capdes = phi - np.arctan(e)
-        file = open("log.txt", "w")
-        dt = 0.1  # time step
-        K11, K12, K21, K22, K3 = 0.006, 0.04, 0.05, 0.08, 200  # gains
-        z1, z2 = 70, 70  # integral terms
-        heading=getHeadingSimple(imu,matA,vecb)
         followHeading(capdes, 10000, imu, arduino, encoder, Ainv, binv)
 
 
