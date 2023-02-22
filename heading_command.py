@@ -18,6 +18,32 @@ def chooseRPM(wanted_rpm, goal_rpm_diff):
         return goal_rpmL, goal_rpmR
 
 
+def adjustPWM(command_pwmL, command_pwmR, command_rpmL, command_rpmR, encoder):
+    if command_pwmL > 255:
+        command_pwmL = 255
+    elif command_pwmL < 0:
+        command_pwmL = 0
+    elif command_rpmL - getRPM(encoder)[0] > 50:
+        while command_rpmL - getRPM(encoder)[0] > 50:
+            command_pwmL += 5
+    elif command_rpmL - getRPM(encoder)[0] < -50:
+        while command_rpmL - getRPM(encoder)[0] < -50:
+            command_pwmL -= 5
+
+    if command_pwmR > 255:
+        command_pwmR = 255
+    elif command_pwmR < 0:
+        command_pwmR = 0
+    elif command_rpmR - getRPM(encoder)[1] > 50:
+        while command_rpmR - getRPM(encoder)[1] > 50:
+            command_pwmR += 5
+    elif command_rpmR - getRPM(encoder)[1] < -50:
+        while command_rpmR - getRPM(encoder)[1] < -50:
+            command_pwmR -= 5
+
+    return command_pwmL, command_pwmR
+
+
 def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
     """
     follows the heading for a given duration
@@ -32,8 +58,9 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
     file = open("log.txt", "w")
 
     dt = 0.1  # time step
-    K11, K12, K21, K22, K3 = 5, 5, 0.05, 0.05, 650  # gains
+    K11, K12, K21, K22, K3 = 0.1, 0.1, 0.05, 0.05, 650  # gains
     z1, z2 = 70, 70  # integral terms
+    command_pwmL, command_pwmR = 80, 80  # pwm values
     global_init_time = time.time()
     while time.time() - global_init_time < duration:
         init_time = time.time()
@@ -52,6 +79,10 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
         command_rpmL = K11 * e1  # + K21 * z1
         command_rpmR = K12 * e2  # + K22 * z2
 
+        command_pwmL, command_pwmR = adjustPWM(command_pwmL, command_pwmR,
+                                               command_rpmL, command_rpmR,
+                                               encoder)
+
         # print("###################################")
         # print("rpmL : ", w1, "rpmR : ", w2)
         # print("omega bar : ", wbar1, wbar2)
@@ -68,7 +99,7 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
             file.write(str(data) + " ")
         file.write("\n")
 
-        arduino.send_arduino_cmd_motor(command_rpmL, command_rpmR)
+        arduino.send_arduino_cmd_motor(command_pwmL, command_pwmR)
 
         end_time = time.time()
         if end_time - init_time < dt:
