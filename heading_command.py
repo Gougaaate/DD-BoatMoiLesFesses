@@ -18,7 +18,8 @@ def chooseRPM(wanted_rpm, goal_rpm_diff):
         return goal_rpmL, goal_rpmR
 
 
-def followHeading(file, imu, arduino, encoder, gps, A, b, line_a, line_b):
+def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
+                  line_a, line_b):
     """
     follows the heading for a given duration
     :param goal_heading: desired heading
@@ -92,8 +93,10 @@ def followHeading(file, imu, arduino, encoder, gps, A, b, line_a, line_b):
         ]
 
         for data in data_to_write:
-            file.write(str(data) + " ")
-        file.write("\n")
+            data_file.write(str(data) + " ")
+        data_file.write("\n")
+
+        position_file.write(str(boat_x) + " " + str(boat_y) + "\n")
 
         arduino.send_arduino_cmd_motor(command_pwmL, command_pwmR)
 

@@ -10,7 +10,8 @@ arduino = ArduinoIO()
 encoder = EncoderIO()
 gps = GpsIO()
 
-file = open("log.txt", "w")
+data_file = open("log.txt", "w")
+position_file = open("position.txt", "w")
 
 A = np.array([[-72943279.10031439, -28668057.74777813, 3158664.09355233],
               [-5700163.24498797, 80185389.18243794, 884174.92923037],
@@ -18,11 +19,9 @@ A = np.array([[-72943279.10031439, -28668057.74777813, 3158664.09355233],
 b = np.array([-1414.5, 1552.5, -4570.5]).T
 
 gps_points = [
-    np.array([[], []]),
-    np.array([[], []]),
-    np.array([[], []]),
-    np.array([[], []]),
-    np.array([[], []])
+    np.array([[48.198943], [-3.014750]]),
+    np.array([[48.199276], [-3.014887]]),
+    np.array([[48.198943], [-3.014750]]),
 ]
 
 point_cnt = 0
@@ -42,6 +41,8 @@ point_cnt = 0
 # followHeading(goal_heading, duration, imu, arduino, encoder, A, b)
 
 while point_cnt < len(gps_points) - 1:
-    followLine(file, gps, imu, arduino, encoder, A, b, gps_points, point_cnt)
+    followLine(data_file, position_file, gps, imu, arduino, encoder, A, b,
+               gps_points, point_cnt)
 
-file.close()
+data_file.close()
+position_file.close()

@@ -22,13 +22,15 @@ def gps_to_xy(lat, lon):
     return rel_x, rel_y
 
 
-def followLine(file, gps, imu, arduino, encoder, A, b, gps_points, point_cnt):
+def followLine(data_file, position_file, gps, imu, arduino, encoder, A, b,
+               gps_points, point_cnt):
     line_a, line_b = gps_points[point_cnt], gps_points[point_cnt + 1]
     line_a[0, 0], line_a[1, 0] = gps_to_xy(line_a[0, 0],
                                            line_a[1, 0])  # convert gps to xy
     line_b[0, 0], line_b[1, 0] = gps_to_xy(line_b[0, 0],
                                            line_b[1, 0])  # convert gps to xy
 
-    followHeading(file, imu, arduino, encoder, gps, A, b, line_a, line_b)
+    followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
+                  line_a, line_b)
 
     point_cnt += 1

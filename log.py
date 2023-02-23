@@ -41,5 +41,20 @@ def plot_data():
     plt.show()
 
 
+def plot_position():
+    with open("position.txt") as p:
+        X, Y = [], []
+        for line in p.readlines():
+            x, y = line.split()
+            X.append(x)
+            Y.append(y)
+
+        plt.figure("Trajectory of the boat")
+        plt.plot(X, Y, label="trajectory")
+        plt.legend()
+        plt.show()
+
+
 if __name__ == '__main__':
     plot_data()
+    plot_position()
