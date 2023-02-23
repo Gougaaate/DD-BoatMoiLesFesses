@@ -1,19 +1,9 @@
 import time
 from drivers.gps_driver_v2 import GpsIO
-import numpy as np
 from get_current_heading import getHeadingSimple
 from get_motors_RPM import getRPM
-gps = GpsIO()
+from fonctions_utiles import *
 
-def conversion_manuelle(lat, long):
-    rho = 6371000
-    latm = np.pi / 180 * 48.198943
-    longm = np.pi / 180 * -3.014750
-    lat = np.pi / 180 * lat
-    long = np.pi / 180 * long
-    xt = rho * np.cos(lat) * (lat - latm)
-    yt = rho * (long - longm)
-    return xt, yt
 
 def sawtooth(x):
     return (x + np.pi) % (2 * np.pi) - np.pi
@@ -92,6 +82,8 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
         for data in data_to_write:
             file.write(str(data) + " ")
         file.write("\n")
+
+        gps = GpsIO()
         gpsok, gpsdata = gps.read_gll_non_blocking()
         xi, yi = conversion_manuelle(gpsdata[0], gpsdata[2])
         file2.write(str(xi) + " ")
