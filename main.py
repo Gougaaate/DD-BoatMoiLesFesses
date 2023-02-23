@@ -24,5 +24,7 @@ elif goal_heading == "S":
     goal_heading = 180
 elif goal_heading == "E":
     goal_heading = 90
+else:
+    goal_heading=float(goal_heading)
 
 followHeading(goal_heading, duration, imu, arduino, encoder, A, b)

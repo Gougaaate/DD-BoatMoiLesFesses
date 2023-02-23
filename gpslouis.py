@@ -27,7 +27,6 @@ def conversion_manuelle(lat, long):
     yt = rho * (long - longm)
     return xt, yt
 
-
 def chooseRPM(wanted_rpm, goal_rpm_diff):
     goal_rpmL, goal_rpmR = wanted_rpm, wanted_rpm + abs(goal_rpm_diff)
     if goal_rpm_diff > 0:
@@ -58,25 +57,24 @@ def sawtooth(x):
 
 
 def suivi_gps(arduino, imu):
-    Ax, Ay = conversion_manuelle(48.199508, -3.015295)
-    Bx, By = conversion_manuelle(48.199184, -3.015283)
+    Ax, Ay = conversion_manuelle(48.1994, -3.0166)
     a = np.array([[Ax], [Ay]])
-    b = np.array([[Bx], [By]])
     gpsok, gpsdata = gps.read_gll_non_blocking()
     xi, yi = conversion_manuelle(gpsdata[0], gpsdata[2])
     phi = np.arctan2(a[1, 0] - yi, a[0, 0] - xi)
     xiyi = [xi, yi]
-    while not estalabouee("A", xiyi):
-        xiyi = np.array([[xi], [yi]])
-        gpsok, gpsdata = gps.read_gll_non_blocking()
-        x, y = conversion_manuelle(gpsdata[0], gpsdata[2])
-        m = np.array([[x], [y]])
-        u = m - xiyi
-        v = (a - xiyi) / np.linalg.norm(a - xiyi)
-        A = np.hstack((u, v))
-        e = np.linalg.det(A)
-        capdes = phi - np.arctan(e)
-        followHeading(capdes, 10000, imu, arduino, encoder, Ainv, binv)
+    followHeading(phi,1000,imu,arduino,encoder,Ainv,binv)
+    #while not estalabouee("A", xiyi):
+        # xiyi = np.array([[xi], [yi]])
+        # gpsok, gpsdata = gps.read_gll_non_blocking()
+        # x, y = conversion_manuelle(gpsdata[0], gpsdata[2])
+        # m = np.array([[x], [y]])
+        # u = m - xiyi
+        # v = (a - xiyi) / np.linalg.norm(a - xiyi)
+        # A = np.hstack((u, v))
+        # e = np.linalg.det(A)
+        # capdes = phi - np.arctan(e)
+        # followHeading(capdes, 5, imu, arduino, encoder, Ainv, binv)
 
 
 if __name__ == "__main__":

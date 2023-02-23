@@ -1,8 +1,19 @@
 import time
+from drivers.gps_driver_v2 import GpsIO
 import numpy as np
 from get_current_heading import getHeadingSimple
 from get_motors_RPM import getRPM
+gps = GpsIO()
 
+def conversion_manuelle(lat, long):
+    rho = 6371000
+    latm = np.pi / 180 * 48.198943
+    longm = np.pi / 180 * -3.014750
+    lat = np.pi / 180 * lat
+    long = np.pi / 180 * long
+    xt = rho * np.cos(lat) * (lat - latm)
+    yt = rho * (long - longm)
+    return xt, yt
 
 def sawtooth(x):
     return (x + np.pi) % (2 * np.pi) - np.pi
@@ -31,7 +42,7 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
     :return: none
     """
     file = open("log.txt", "w")
-
+    file2 = open("position.txt", "w")
     dt = 0.1  # time step
     K11, K12, K21, K22, K3 = 0.006, 0.04, 0.05, 0.08, 200  # gains
     z1, z2 = 70, 70  # integral terms
@@ -81,7 +92,11 @@ def followHeading(goal_heading, duration, imu, arduino, encoder, A, b):
         for data in data_to_write:
             file.write(str(data) + " ")
         file.write("\n")
-
+        gpsok, gpsdata = gps.read_gll_non_blocking()
+        xi, yi = conversion_manuelle(gpsdata[0], gpsdata[2])
+        file2.write(str(xi) + " ")
+        file2.write(str(yi) + " ")
+        file2.write("\n")
         arduino.send_arduino_cmd_motor(command_pwmL, command_pwmR)
 
     arduino.send_arduino_cmd_motor(0, 0)  # turn off motors

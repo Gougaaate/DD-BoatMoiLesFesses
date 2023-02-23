@@ -45,8 +45,8 @@ def plot_position():
         X, Y = [], []
         for line in p.readlines():
             x, y = line.split()
-            X.append(x)
-            Y.append(y)
+            X.append(float(x))
+            Y.append(float(y))
 
         plt.figure("Trajectory of the boat")
         plt.plot(X, Y, label = "trajectory")
@@ -56,4 +56,4 @@ def plot_position():
 
 
 if __name__ == '__main__':
-    plot_data()
+    plot_position()
