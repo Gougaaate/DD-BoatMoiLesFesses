@@ -1,7 +1,8 @@
 import numpy as np
-import pyproj
+# import pyproj
 from get_current_heading import getHeadingSimple
 from get_motors_RPM import getRPM
+from get_current_heading import degToRad
 
 
 def sawtooth(x):
@@ -17,6 +18,15 @@ def manual_conversion(lat, long):
     xt = rho * np.cos(lat) * (lat - lat0)
     yt = rho * (long - long0)
     return xt, yt
+
+
+def gps_conversion(lat, lon):
+    R = 6371000  # Earth radius
+    ref_lat = 48.199000  # reference latitude (random in the area)
+    lat0, lon0 = 48.198943, -3.014750
+    x = R * (lon - lon0) * np.cos(degToRad(ref_lat))
+    y = R * (lat - lat0)
+    return x, y
 
 
 def gps_to_xy(lat, lon):
@@ -68,7 +78,7 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
 
     gps_ok, gps_data = gps.read_gll_non_blocking()  # read gps data
     boat_lat, boat_lon = gps_data[0], gps_data[2]  # get boat position
-    boat_x, boat_y = manual_conversion(boat_lat, boat_lon)  # convert gps to xy
+    boat_x, boat_y = gps_conversion(boat_lat, boat_lon)  # convert gps to xy
     boat_pos = np.array([[boat_x], [boat_y]])  # boat position
     line_error = np.linalg.det([[
         line_b[0, 0] - line_a[0, 0], boat_pos[0, 0] - line_a[0, 0]

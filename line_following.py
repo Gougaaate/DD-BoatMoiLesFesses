@@ -1,15 +1,13 @@
-from heading_command import followHeading, manual_conversion
+from heading_command import followHeading, gps_conversion
 
 
 def followLine(data_file, position_file, gps, imu, arduino, encoder, A, b,
                gps_points, point_cnt):
     line_a, line_b = gps_points[point_cnt], gps_points[point_cnt + 1]
-    line_a[0, 0], line_a[1,
-                         0] = manual_conversion(line_a[0, 0],
+    line_a[0, 0], line_a[1, 0] = gps_conversion(line_a[0, 0],
                                                 line_a[1,
                                                        0])  # convert gps to xy
-    line_b[0, 0], line_b[1,
-                         0] = manual_conversion(line_b[0, 0],
+    line_b[0, 0], line_b[1, 0] = gps_conversion(line_b[0, 0],
                                                 line_b[1,
                                                        0])  # convert gps to xy
 
