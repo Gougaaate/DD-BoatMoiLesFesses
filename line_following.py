@@ -10,8 +10,9 @@ def followLine(data_file, position_file, gps, imu, arduino, encoder, A, b,
     line_b[0, 0], line_b[1, 0] = gps_conversion(line_b[0, 0],
                                                 line_b[1,
                                                        0])  # convert gps to xy
-
+    print("Line ", point_cnt + 1)
     followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
                   line_a, line_b)
 
     point_cnt += 1
+    return point_cnt

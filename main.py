@@ -41,8 +41,8 @@ point_cnt = 0
 # followHeading(goal_heading, duration, imu, arduino, encoder, A, b)
 
 while point_cnt < len(gps_points) - 1:
-    followLine(data_file, position_file, gps, imu, arduino, encoder, A, b,
-               gps_points, point_cnt)
+    point_cnt = followLine(data_file, position_file, gps, imu, arduino,
+                           encoder, A, b, gps_points, point_cnt)
 
 data_file.close()
 position_file.close()
