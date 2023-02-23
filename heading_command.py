@@ -1,11 +1,42 @@
 import numpy as np
+import pyproj
 from get_current_heading import getHeadingSimple
 from get_motors_RPM import getRPM
-from line_following import gps_to_xy
 
 
 def sawtooth(x):
     return (x + np.pi) % (2 * np.pi) - np.pi
+
+
+def manual_conversion(lat, long):
+    rho = 6371000
+    lat0 = np.pi / 180 * 48.198943
+    long0 = np.pi / 180 * -3.014750
+    lat = np.pi / 180 * lat
+    long = np.pi / 180 * long
+    xt = rho * np.cos(lat) * (lat - lat0)
+    yt = rho * (long - long0)
+    return xt, yt
+
+
+def gps_to_xy(lat, lon):
+    # Define the projection system you want to use
+    project = pyproj.Proj(proj='utm', zone='30T', ellps='WGS84')
+
+    # Define the GPS coordinates of the origin point
+    lat0, lon0 = 48.198943, -3.014750
+
+    # Convert the origin GPS coordinates to UTM coordinates
+    x0, y0 = project(lon0, lat0)
+
+    # Convert the GPS coordinates to x, y coordinates
+    x, y = project(lon, lat)
+
+    # Calculate the relative UTM coordinates with respect to the origin
+    rel_x = x - x0
+    rel_y = y - y0
+
+    return rel_x, rel_y
 
 
 def chooseRPM(wanted_rpm, goal_rpm_diff):
@@ -37,19 +68,20 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
 
     gps_ok, gps_data = gps.read_gll_non_blocking()  # read gps data
     boat_lat, boat_lon = gps_data[0], gps_data[2]  # get boat position
-    boat_x, boat_y = gps_to_xy(boat_lat, boat_lon)  # convert gps to xy
+    boat_x, boat_y = manual_conversion(boat_lat, boat_lon)  # convert gps to xy
     boat_pos = np.array([[boat_x], [boat_y]])  # boat position
-    line_error = np.det([[
+    line_error = np.linalg.det([[
         line_b[0, 0] - line_a[0, 0], boat_pos[0, 0] - line_a[0, 0]
-    ], [line_b[1, 0] - line_a[1, 0], boat_pos[1, 0] - line_a[1, 0]]
-                         ]) / np.norm(line_b - line_a)  # line error
+    ], [line_b[1, 0] - line_a[1, 0], boat_pos[1, 0] - line_a[1, 0]
+        ]]) / np.linalg.norm(line_b - line_a)  # line error
     line_angle = np.arctan2(line_b[1, 0] - line_a[1, 0],
                             line_b[0, 0] - line_a[0, 0])  # line angle
     goal_heading = line_angle - np.arctan(line_error)  # desired heading
 
     # global_init_time = time.time()
     # while time.time() - global_init_time < duration:
-    while np.norm(boat_pos - line_b) < 1:  # while the boat is not at the end
+    while np.linalg.norm(boat_pos -
+                         line_b) < 1:  # while the boat is not at the end
         # init_time = time.time()
         heading = getHeadingSimple(imu, A, b)  # current heading
         heading_error = goal_heading - heading
