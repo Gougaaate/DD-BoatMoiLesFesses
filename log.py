@@ -56,5 +56,5 @@ def plot_position():
 
 
 if __name__ == '__main__':
-    plot_data()
+    # plot_data()
     plot_position()

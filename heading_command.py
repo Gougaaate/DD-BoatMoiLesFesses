@@ -9,7 +9,7 @@ def sawtooth(x):
     return (x + np.pi) % (2 * np.pi) - np.pi
 
 
-def manual_conversion(lat, long):
+def manualConversion(lat, long):
     rho = 6371000
     lat0 = np.pi / 180 * 48.198943
     long0 = np.pi / 180 * -3.014750
@@ -20,7 +20,7 @@ def manual_conversion(lat, long):
     return xt, yt
 
 
-def gps_conversion(lat, lon):
+def gpsConversion(lat, lon):
     R = 6371000  # Earth radius
     ref_lat = 48.199000  # reference latitude (random in the area)
     lat0, lon0 = 48.198943, -3.014750
@@ -47,6 +47,14 @@ def gps_conversion(lat, lon):
 #     rel_y = y - y0
 
 #     return rel_x, rel_y
+
+
+def getBoatPos(gps):
+    gps_ok, gps_data = gps.read_gll_non_blocking()  # read gps data
+    boat_lat, boat_lon = gps_data[0], gps_data[2]  # get boat position
+    boat_x, boat_y = gpsConversion(boat_lat, boat_lon)  # convert gps to xy
+    boat_pos = np.array([[boat_x], [boat_y]])  # boat position
+    return boat_pos
 
 
 def chooseRPM(wanted_rpm, goal_rpm_diff):
@@ -76,23 +84,20 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
     K11, K12, K21, K22, K3 = 0.006, 0.04, 0.05, 0.08, 200  # gains
     z1, z2 = 70, 70  # integral terms
 
-    gps_ok, gps_data = gps.read_gll_non_blocking()  # read gps data
-    boat_lat, boat_lon = gps_data[0], gps_data[2]  # get boat position
-    boat_x, boat_y = gps_conversion(boat_lat, boat_lon)  # convert gps to xy
-    boat_pos = np.array([[boat_x], [boat_y]])  # boat position
-    line_error = np.linalg.det([[
-        line_b[0, 0] - line_a[0, 0], boat_pos[0, 0] - line_a[0, 0]
-    ], [line_b[1, 0] - line_a[1, 0], boat_pos[1, 0] - line_a[1, 0]
-        ]]) / np.linalg.norm(line_b - line_a)  # line error
+    boat_pos = getBoatPos(gps)  # initialize boat position
     line_angle = np.arctan2(line_b[1, 0] - line_a[1, 0],
                             line_b[0, 0] - line_a[0, 0])  # line angle
-    goal_heading = line_angle - np.arctan(line_error)  # desired heading
 
-    # global_init_time = time.time()
-    # while time.time() - global_init_time < duration:
     while np.linalg.norm(boat_pos -
                          line_b) < 1:  # while the boat is not at the end
-        # init_time = time.time()
+        boat_pos = getBoatPos(gps)  # get boat position
+        line_error = np.linalg.det([[
+            line_b[0, 0] - line_a[0, 0], boat_pos[0, 0] - line_a[0, 0]
+        ], [line_b[1, 0] - line_a[1, 0], boat_pos[1, 0] - line_a[1, 0]
+            ]]) / np.linalg.norm(line_b - line_a)  # line error
+
+        goal_heading = line_angle - np.arctan(line_error)  # desired heading
+
         heading = getHeadingSimple(imu, A, b)  # current heading
         heading_error = goal_heading - heading
         if heading_error > 70:
@@ -138,7 +143,8 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
             data_file.write(str(data) + " ")
         data_file.write("\n")
 
-        position_file.write(str(boat_x) + " " + str(boat_y) + "\n")
+        position_file.write(
+            str(boat_pos[0, 0]) + " " + str(boat_pos[1, 0]) + "\n")
 
         arduino.send_arduino_cmd_motor(command_pwmL, command_pwmR)
 
