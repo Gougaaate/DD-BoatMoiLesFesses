@@ -29,24 +29,24 @@ def gps_conversion(lat, lon):
     return x, y
 
 
-def gps_to_xy(lat, lon):
-    # Define the projection system you want to use
-    project = pyproj.Proj(proj='utm', zone='30T', ellps='WGS84')
+# def gps_to_xy(lat, lon):
+#     # Define the projection system you want to use
+#     project = pyproj.Proj(proj='utm', zone='30T', ellps='WGS84')
 
-    # Define the GPS coordinates of the origin point
-    lat0, lon0 = 48.198943, -3.014750
+#     # Define the GPS coordinates of the origin point
+#     lat0, lon0 = 48.198943, -3.014750
 
-    # Convert the origin GPS coordinates to UTM coordinates
-    x0, y0 = project(lon0, lat0)
+#     # Convert the origin GPS coordinates to UTM coordinates
+#     x0, y0 = project(lon0, lat0)
 
-    # Convert the GPS coordinates to x, y coordinates
-    x, y = project(lon, lat)
+#     # Convert the GPS coordinates to x, y coordinates
+#     x, y = project(lon, lat)
 
-    # Calculate the relative UTM coordinates with respect to the origin
-    rel_x = x - x0
-    rel_y = y - y0
+#     # Calculate the relative UTM coordinates with respect to the origin
+#     rel_x = x - x0
+#     rel_y = y - y0
 
-    return rel_x, rel_y
+#     return rel_x, rel_y
 
 
 def chooseRPM(wanted_rpm, goal_rpm_diff):
