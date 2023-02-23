@@ -50,7 +50,10 @@ def plot_position():
             Y.append(y)
 
         plt.figure("Boat trajectory")
-        plt.plot(X, Y, label="trajectory")
+        plt.plot(X, Y, label="trajectory", color="blue")
+        line_x = [0., -581.77889268]
+        line_y = [0., 2121.54299999]
+        plt.plot(line_x, line_y, label="line", color="red")
         plt.legend()
         plt.show()
 

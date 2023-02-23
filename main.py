@@ -10,6 +10,11 @@ arduino = ArduinoIO()
 encoder = EncoderIO()
 gps = GpsIO()
 
+gps.set_filter_speed("0.4")
+gps.get_filter_speed()
+gps.set_filter_speed("0")
+gps.get_filter_speed()
+
 data_file = open("log.txt", "w")
 position_file = open("position.txt", "w")
 

@@ -3,6 +3,7 @@ import numpy as np
 from get_current_heading import getHeadingSimple
 from get_motors_RPM import getRPM
 from get_current_heading import degToRad
+import time
 
 
 def sawtooth(x):
@@ -24,7 +25,10 @@ def gpsConversion(lat, lon):
     R = 6371000  # Earth radius
     ref_lat = 48.199000  # reference latitude (random in the area)
     lat0, lon0 = 48.198943, -3.014750
-    x = R * (lon - lon0) * np.cos(degToRad(ref_lat))
+    ref_lat = degToRad(ref_lat)
+    lat0, lon0 = degToRad(lat0), degToRad(lon0)
+    lat, lon = degToRad(lat), degToRad(lon0)
+    x = R * (lon - lon0) * np.cos(ref_lat)
     y = R * (lat - lat0)
     return x, y
 
@@ -50,10 +54,28 @@ def gpsConversion(lat, lon):
 
 
 def getBoatPos(gps):
-    gps_ok, gps_data = gps.read_gll_non_blocking()  # read gps data
-    boat_lat, boat_lon = gps_data[0], gps_data[2]  # get boat position
-    boat_x, boat_y = gpsConversion(boat_lat, boat_lon)  # convert gps to xy
+    gll_ok, gll_data = gps.read_gll_non_blocking()  # read gps data
+    while not gll_ok:
+        gll_ok, gll_data = gps.read_gll_non_blocking()  # read gps data
+    print("GPS data", gll_data)
+
+    # Convert latitude to decimal degrees format
+    lat_degrees = int(gll_data[0] / 100)
+    lat_minutes = gll_data[0] - lat_degrees * 100
+    lat_decimal_degrees = lat_degrees + lat_minutes / 60
+
+    # Convert longitude to decimal degrees format
+    lon_degrees = int(gll_data[2] / 100)
+    lon_minutes = gll_data[2] - lon_degrees * 100
+    lon_decimal_degrees = lon_degrees + lon_minutes / 60
+
+    print("Boat lat: ", lat_decimal_degrees)
+    print("Boat lon: ", lon_decimal_degrees)
+
+    boat_x, boat_y = gpsConversion(lat_decimal_degrees,
+                                   lon_decimal_degrees)  # convert gps to xy
     boat_pos = np.array([[boat_x], [boat_y]])  # boat position
+    print("Boat (x,y) position: ", boat_pos)
     return boat_pos
 
 
@@ -83,14 +105,18 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
     dt = 0.1  # time step
     K11, K12, K21, K22, K3 = 0.006, 0.04, 0.05, 0.08, 200  # gains
     z1, z2 = 70, 70  # integral terms
+    # print("Line a: ", line_a)
+    # print("Line b: ", line_b)
 
     boat_pos = getBoatPos(gps)  # initialize boat position
+    time.sleep(0.01)
     line_angle = np.arctan2(line_b[1, 0] - line_a[1, 0],
                             line_b[0, 0] - line_a[0, 0])  # line angle
 
     while np.linalg.norm(boat_pos -
-                         line_b) < 1:  # while the boat is not at the end
+                         line_b) > 5:  # while the boat is not at the end
         boat_pos = getBoatPos(gps)  # get boat position
+        time.sleep(0.01)
         line_error = np.linalg.det([[
             line_b[0, 0] - line_a[0, 0], boat_pos[0, 0] - line_a[0, 0]
         ], [line_b[1, 0] - line_a[1, 0], boat_pos[1, 0] - line_a[1, 0]
