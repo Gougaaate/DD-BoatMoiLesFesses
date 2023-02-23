@@ -4,8 +4,6 @@ from drivers.imu9_driver_v2 import Imu9IO
 from drivers.encoders_driver_v2 import EncoderIO
 import numpy as np
 from heading_command import followHeading
-from get_current_heading import getHeadingSimple
-from get_motors_RPM import getRPM
 
 gps = GpsIO()
 
@@ -16,7 +14,8 @@ binv = np.array([-1414.5, 1552.5, -4570.5]).T
 
 
 def dist_entre_deux_points(a, b):
-    return np.sqrt((b[1]-a[1])**2+(b[0]-a[0])**2)
+    return np.sqrt((b[1] - a[1]) ** 2 + (b[0] - a[0]) ** 2)
+
 
 def conversion_manuelle(lat, long):
     rho = 6371000
@@ -44,7 +43,7 @@ def estalabouee(nom, xy):
         xf, yf = conversion_manuelle(48.199276, -3.014887)
     if nom == "B":
         xf, yf = conversion_manuelle(48.199508, -3.015295)
-    if nom == "C":
+    else:
         xf, yf = conversion_manuelle(48.199184, -3.015283)
     xfyf = [xf, yf]
     if dist_entre_deux_points(xy, xfyf) > 10:
@@ -58,7 +57,7 @@ def sawtooth(x):
             2 * np.pi) - np.pi  # or equivalently   2*np.arctan(np.tan(x/2))
 
 
-def suivi_gps(arduino, imu, matA, vecb, vitesse):
+def suivi_gps(arduino, imu):
     Ax, Ay = conversion_manuelle(48.199508, -3.015295)
     Bx, By = conversion_manuelle(48.199184, -3.015283)
     a = np.array([[Ax], [Ay]])
@@ -67,7 +66,7 @@ def suivi_gps(arduino, imu, matA, vecb, vitesse):
     xi, yi = conversion_manuelle(gpsdata[0], gpsdata[2])
     phi = np.arctan2(a[1, 0] - yi, a[0, 0] - xi)
     xiyi = [xi, yi]
-    while estalabouee("A", xiyi)==False:
+    while not estalabouee("A", xiyi):
         xiyi = np.array([[xi], [yi]])
         gpsok, gpsdata = gps.read_gll_non_blocking()
         x, y = conversion_manuelle(gpsdata[0], gpsdata[2])
@@ -84,4 +83,4 @@ if __name__ == "__main__":
     arduino = ArduinoIO()
     encoder = EncoderIO()
     imu = Imu9IO()
-    suivi_gps(arduino,imu,Ainv,binv,80)
+    suivi_gps(arduino, imu)
