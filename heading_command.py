@@ -10,15 +10,8 @@ def sawtooth(x):
     return (x + np.pi) % (2 * np.pi) - np.pi
 
 
-def manualConversion(lat, long):
-    rho = 6371000
-    lat0 = np.pi / 180 * 48.198943
-    long0 = np.pi / 180 * -3.014750
-    lat = np.pi / 180 * lat
-    long = np.pi / 180 * long
-    xt = rho * np.cos(lat) * (lat - lat0)
-    yt = rho * (long - long0)
-    return xt, yt
+def distance(a, b):
+    return np.sqrt((b[1, 0] - a[1, 0])**2 + (b[0, 0] - a[0, 0])**2)
 
 
 def gpsConversion(lat, lon):
@@ -28,8 +21,8 @@ def gpsConversion(lat, lon):
     ref_lat = degToRad(ref_lat)
     lat0, lon0 = degToRad(lat0), degToRad(lon0)
     lat, lon = degToRad(lat), degToRad(lon0)
-    x = R * (lon - lon0) * np.cos(ref_lat)
-    y = R * (lat - lat0)
+    x = R * (lat - lat0) * np.cos(ref_lat)
+    y = R * (lon - lon0)
     return x, y
 
 
@@ -57,7 +50,7 @@ def getBoatPos(gps):
     gll_ok, gll_data = gps.read_gll_non_blocking()  # read gps data
     while not gll_ok:
         gll_ok, gll_data = gps.read_gll_non_blocking()  # read gps data
-    print("GPS data", gll_data)
+    # print("GPS data", gll_data)
 
     # Convert latitude to decimal degrees format
     lat_degrees = int(gll_data[0] / 100)
@@ -67,7 +60,7 @@ def getBoatPos(gps):
     # Convert longitude to decimal degrees format
     lon_degrees = int(gll_data[2] / 100)
     lon_minutes = gll_data[2] - lon_degrees * 100
-    lon_decimal_degrees = lon_degrees + lon_minutes / 60
+    lon_decimal_degrees = -(lon_degrees + lon_minutes / 60)
 
     print("Boat lat: ", lat_decimal_degrees)
     print("Boat lon: ", lon_decimal_degrees)
@@ -113,8 +106,10 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
     line_angle = np.arctan2(line_b[1, 0] - line_a[1, 0],
                             line_b[0, 0] - line_a[0, 0])  # line angle
 
-    while np.linalg.norm(boat_pos -
-                         line_b) > 5:  # while the boat is not at the end
+    # while np.linalg.norm(boat_pos -
+    #                      line_b) > 10:  # while the boat is not at the end
+    while distance(boat_pos, line_b) > 5:  # while the boat is not at the end
+        print("Distance to point: ", boat_pos - line_b)
         boat_pos = getBoatPos(gps)  # get boat position
         time.sleep(0.01)
         line_error = np.linalg.det([[
