@@ -1,11 +1,14 @@
 import numpy as np
 import sys
 from get_current_heading import degToRad
+from drivers.imu9_driver_v2 import Imu9IO
 
 sys.path.append("./drivers")
 
 beta = 46 * 10**(-6)
 inclination = 64
+
+imu = Imu9IO()
 
 
 def calibrateMag(imu):
@@ -38,3 +41,9 @@ def calibrateMag(imu):
     print(Y.shape)
     A = X @ np.linalg.inv(Y)
     return A, b
+
+
+if __name__ == '__main__':
+    A, b = calibrateMag(imu)
+    print("A: ", A)
+    print("b: ", b)

@@ -26,7 +26,7 @@ def getBoatPos(gps):
     gll_ok, gll_data = gps.read_gll_non_blocking()  # read gps data
     while not gll_ok:
         gll_ok, gll_data = gps.read_gll_non_blocking()  # read gps data
-    # print("GPS data", gll_data)
+    print("GPS data", gll_data)
 
     # Convert latitude to decimal degrees format
     lat_degrees = int(gll_data[0] / 100)
@@ -38,8 +38,8 @@ def getBoatPos(gps):
     lon_minutes = gll_data[2] - lon_degrees * 100
     lon_decimal_degrees = -(lon_degrees + lon_minutes / 60)
 
-    print("Boat lat: ", lat_decimal_degrees)
-    print("Boat lon: ", lon_decimal_degrees)
+    print("Boat (lat, lon) position: ", lat_decimal_degrees,
+          lon_decimal_degrees)
 
     boat_x, boat_y = gpsConversion(lat_decimal_degrees,
                                    lon_decimal_degrees)  # convert gps to xy
@@ -95,8 +95,10 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
             ]]) / np.linalg.norm(line_b - line_a)  # line error
 
         goal_heading = line_angle - np.arctan(line_error)  # desired heading
+        print("Goal heading", goal_heading)
 
         heading = getHeadingSimple(imu, A, b)  # current heading
+        print("Current heading", heading)
         heading_error = goal_heading - heading
         if heading_error > 70:
             print("turn right")

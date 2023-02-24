@@ -50,7 +50,7 @@ def plot_position():
             pos_x.append(x)
             pos_y.append(y)
     line_a = [0., 0.]
-    line_b = [41.87580887, -60.60123502]
+    line_b = [19.19616725, -27.79873166]
     fig = go.Figure()
 
     fig.add_trace(
