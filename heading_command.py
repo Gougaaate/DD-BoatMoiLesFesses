@@ -1,5 +1,4 @@
 import numpy as np
-# import pyproj
 from get_current_heading import getHeadingSimple
 from get_motors_RPM import getRPM
 from get_current_heading import degToRad
@@ -18,32 +17,9 @@ def gpsConversion(lat, lon):
     R = 6371000  # Earth radius
     ref_lat = 48.199000  # reference latitude (random in the area)
     lat0, lon0 = 48.198943, -3.014750
-    ref_lat = degToRad(ref_lat)
-    lat0, lon0 = degToRad(lat0), degToRad(lon0)
-    lat, lon = degToRad(lat), degToRad(lon0)
-    x = R * (lat - lat0) * np.cos(ref_lat)
-    y = R * (lon - lon0)
+    x = R * degToRad(lat - lat0) * np.cos(degToRad(ref_lat))
+    y = R * degToRad(lon - lon0)
     return x, y
-
-
-# def gps_to_xy(lat, lon):
-#     # Define the projection system you want to use
-#     project = pyproj.Proj(proj='utm', zone='30T', ellps='WGS84')
-
-#     # Define the GPS coordinates of the origin point
-#     lat0, lon0 = 48.198943, -3.014750
-
-#     # Convert the origin GPS coordinates to UTM coordinates
-#     x0, y0 = project(lon0, lat0)
-
-#     # Convert the GPS coordinates to x, y coordinates
-#     x, y = project(lon, lat)
-
-#     # Calculate the relative UTM coordinates with respect to the origin
-#     rel_x = x - x0
-#     rel_y = y - y0
-
-#     return rel_x, rel_y
 
 
 def getBoatPos(gps):
@@ -109,7 +85,8 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
     # while np.linalg.norm(boat_pos -
     #                      line_b) > 10:  # while the boat is not at the end
     while distance(boat_pos, line_b) > 5:  # while the boat is not at the end
-        print("Distance to point: ", boat_pos - line_b)
+        print("Line points: ", line_a, line_b)
+        print("Distance to point B: ", distance(boat_pos, line_b))
         boat_pos = getBoatPos(gps)  # get boat position
         time.sleep(0.01)
         line_error = np.linalg.det([[

@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
 
 def plot_data():
@@ -43,19 +44,32 @@ def plot_data():
 
 def plot_position():
     with open("position.txt") as p:
-        X, Y = [], []
+        pos_x, pos_y = [], []
         for line in p.readlines():
             x, y = line.split()
-            X.append(x)
-            Y.append(y)
+            pos_x.append(x)
+            pos_y.append(y)
+    line_a = [0., 0.]
+    line_b = [41.87580887, -60.60123502]
+    fig = go.Figure()
 
-        plt.figure("Boat trajectory")
-        plt.plot(X, Y, label="trajectory", color="blue")
-        line_x = [0., -581.77889268]
-        line_y = [0., 2121.54299999]
-        plt.plot(line_x, line_y, label="line", color="red")
-        plt.legend()
-        plt.show()
+    fig.add_trace(
+        go.Scatter(x=[line_a[0], line_b[0]],
+                   y=[line_a[1], line_b[1]],
+                   mode='lines+markers',
+                   name='goal line'))
+    fig.add_trace(
+        go.Scatter(x=pos_x,
+                   y=pos_y,
+                   mode='lines+markers',
+                   name='boat trajectory'))
+
+    fig.update_xaxes(title_text="x", title_standoff=25)
+    fig.update_yaxes(title_text="y", title_standoff=25)
+
+    fig.update_layout(title_text="Goal line and boat trajectory")
+
+    fig.show()
 
 
 if __name__ == '__main__':
