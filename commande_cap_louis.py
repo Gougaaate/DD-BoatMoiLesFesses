@@ -8,10 +8,13 @@ from get_motors_RPM import getRPM
 
 cuml, cumr = 0, 0
 last_wl, last_wr = 0, 0
+
+
 def run(arduino, imu, objectif, vitesse, temps):
-    A_inv = np.array([[-72943279.10031439, -28668057.74777813, 3158664.09355233],
-                      [-5700163.24498797, 80185389.18243794, 884174.92923037],
-                      [-4284025.47859625, 1854081.35680193, -67672505.82742904]])
+    A_inv = np.array(
+        [[-72943279.10031439, -28668057.74777813, 3158664.09355233],
+         [-5700163.24498797, 80185389.18243794, 884174.92923037],
+         [-4284025.47859625, 1854081.35680193, -67672505.82742904]])
     b = np.array([-1414.5, 1552.5, -4570.5]).T
     k3 = 5
 
@@ -53,9 +56,11 @@ def run(arduino, imu, objectif, vitesse, temps):
     except KeyboardInterrupt:
         print("Stop")
 
+
 def sawtooth(x):
     return (x + np.pi) % (
-            2 * np.pi) - np.pi  # or equivalently   2*np.arctan(np.tan(x/2))
+        2 * np.pi) - np.pi  # or equivalently   2*np.arctan(np.tan(x/2))
+
 
 def commande_en_cap(arduino, imu, A_inv, b, k3, objectif, vitesse):
     y = A_inv @ (np.array(imu.read_mag_raw()) + b).T
@@ -85,8 +90,9 @@ def commande_en_cap(arduino, imu, A_inv, b, k3, objectif, vitesse):
     print("w1 : ", w1)
     print("w2 : ", w2)
     arduino.send_arduino_cmd_motor(w1, w2)
-    print("rpm = " , getRPM())
+    print("rpm = ", getRPM())
     return w1, w2, cap, e
+
 
 if __name__ == "__main__":
     arduino = ArduinoIO()

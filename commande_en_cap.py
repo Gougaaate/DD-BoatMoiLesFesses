@@ -36,8 +36,8 @@ def run(arduino, imu, objectif, vitesse, temps):
         while tfin - tinit <= temps:
             temps_reel = time.time()
             temps_boucle_cap = time.time()
-            w1, w2, cap, e = commande_en_cap(arduino, imu, A, b, k3,
-                                             objectif, vitesse)
+            w1, w2, cap, e = commande_en_cap(arduino, imu, A, b, k3, objectif,
+                                             vitesse)
 
             while temps_reel - temps_boucle_cap < 2:
                 temps_boucle_encoder = time.time()
