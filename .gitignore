@@ -1,6 +1,7 @@
 roblib.py
 .idea
 log.txt
+position.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

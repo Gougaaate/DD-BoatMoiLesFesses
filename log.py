@@ -42,36 +42,5 @@ def plot_data():
     plt.show()
 
 
-def plot_position():
-    with open("position.txt") as p:
-        pos_x, pos_y = [], []
-        for line in p.readlines():
-            x, y = line.split()
-            pos_x.append(x)
-            pos_y.append(y)
-    line_a = [0., 0.]
-    line_b = [19.19616725, -27.79873166]
-    fig = go.Figure()
-
-    fig.add_trace(
-        go.Scatter(x=[line_a[0], line_b[0]],
-                   y=[line_a[1], line_b[1]],
-                   mode='lines+markers',
-                   name='goal line'))
-    fig.add_trace(
-        go.Scatter(x=pos_x,
-                   y=pos_y,
-                   mode='lines+markers',
-                   name='boat trajectory'))
-
-    fig.update_xaxes(title_text="x", title_standoff=25)
-    fig.update_yaxes(title_text="y", title_standoff=25)
-
-    fig.update_layout(title_text="Goal line and boat trajectory")
-
-    fig.show()
-
-
 if __name__ == '__main__':
-    # plot_data()
-    plot_position()
+    plot_data()

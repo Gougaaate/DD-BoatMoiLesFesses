@@ -146,6 +146,12 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
         position_file.write(
             str(boat_pos[0, 0]) + " " + str(boat_pos[1, 0]) + "\n")
 
+        gps = GpsIO()
+        gpsok, gpsdata = gps.read_gll_non_blocking()
+        xi, yi = conversion_manuelle(gpsdata[0], gpsdata[2])
+        file2.write(str(xi) + " ")
+        file2.write(str(yi) + " ")
+        file2.write("\n")
         arduino.send_arduino_cmd_motor(command_pwmL, command_pwmR)
 
     arduino.send_arduino_cmd_motor(0, 0)  # turn off motors

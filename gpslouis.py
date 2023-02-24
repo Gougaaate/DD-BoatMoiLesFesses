@@ -54,6 +54,44 @@ def suivi_gps():
     capdes = phi - np.arctan(e)
     followHeading(capdes, 30, imu, arduino, encoder, Ainv, binv)
 
+def estalabouee(nom, xy):
+    if nom == "A":
+        xf, yf = conversion_manuelle(48.199276, -3.014887)
+    if nom == "B":
+        xf, yf = conversion_manuelle(48.199508, -3.015295)
+    else:
+        xf, yf = conversion_manuelle(48.199184, -3.015283)
+    xfyf = [xf, yf]
+    if dist_entre_deux_points(xy, xfyf) > 10:
+        return False
+    else:
+        return True
+
+
+def sawtooth(x):
+    return (x + np.pi) % (
+            2 * np.pi) - np.pi  # or equivalently   2*np.arctan(np.tan(x/2))
+
+
+def suivi_gps(arduino, imu):
+    Ax, Ay = conversion_manuelle(48.1994, -3.0166)
+    a = np.array([[Ax], [Ay]])
+    gpsok, gpsdata = gps.read_gll_non_blocking()
+    xi, yi = conversion_manuelle(gpsdata[0], gpsdata[2])
+    phi = np.arctan2(a[1, 0] - yi, a[0, 0] - xi)
+    xiyi = [xi, yi]
+    followHeading(phi,1000,imu,arduino,encoder,Ainv,binv)
+    #while not estalabouee("A", xiyi):
+        # xiyi = np.array([[xi], [yi]])
+        # gpsok, gpsdata = gps.read_gll_non_blocking()
+        # x, y = conversion_manuelle(gpsdata[0], gpsdata[2])
+        # m = np.array([[x], [y]])
+        # u = m - xiyi
+        # v = (a - xiyi) / np.linalg.norm(a - xiyi)
+        # A = np.hstack((u, v))
+        # e = np.linalg.det(A)
+        # capdes = phi - np.arctan(e)
+        # followHeading(capdes, 5, imu, arduino, encoder, Ainv, binv)
 
 if __name__ == "__main__":
     arduino = ArduinoIO()
