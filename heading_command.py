@@ -1,6 +1,7 @@
 import numpy as np
 from get_current_heading import getHeadingSimple
 from get_motors_RPM import getRPM
+from drivers.gps_driver_v2 import GpsIO
 from get_current_heading import degToRad
 import time
 
@@ -62,8 +63,6 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
                   line_a, line_b):
     """
     follows the heading for a given duration
-    :param goal_heading: desired heading
-    :param duration: duration of the race
     :param imu: inertial measurement unit
     :param arduino: arduino
     :param encoder: encoder
@@ -147,11 +146,6 @@ def followHeading(data_file, position_file, imu, arduino, encoder, gps, A, b,
             str(boat_pos[0, 0]) + " " + str(boat_pos[1, 0]) + "\n")
 
         gps = GpsIO()
-        gpsok, gpsdata = gps.read_gll_non_blocking()
-        xi, yi = conversion_manuelle(gpsdata[0], gpsdata[2])
-        file2.write(str(xi) + " ")
-        file2.write(str(yi) + " ")
-        file2.write("\n")
         arduino.send_arduino_cmd_motor(command_pwmL, command_pwmR)
 
     arduino.send_arduino_cmd_motor(0, 0)  # turn off motors
