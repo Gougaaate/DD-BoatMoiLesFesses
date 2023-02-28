@@ -16,7 +16,7 @@ Last work done : following a circle using a Kalman filter
 ## Dependencies
 You need the drivers folder, and the roblib.py file.
 ## How to use the code ?
-You have to use the terminal to bind yourself to the boat using a ssh protocol : 
+You have to use the shell to connect yourself to the boat using a SSH protocol : 
 ```console
 $ ssh ue32@172.20.25.205
 $ ue32
